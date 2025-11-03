@@ -268,13 +268,9 @@ body {
     display: none !important;
 }
 
-/* Hide journey header in systematic dashboard */
+/* Hide journey header in systematic dashboard completely */
 .systematic-dashboard .learning-header {
-    padding: 20px 25px;
-}
-
-.systematic-dashboard .learning-header h2 {
-    margin: 0;
+    display: none !important;
 }
 
 /* Hide Notification Spam */
