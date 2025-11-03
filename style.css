@@ -1438,3 +1438,504 @@ body {
         width: 100%;
     }
 }
+
+/* ================================
+   🎓 ONBOARDING & TUTORIAL STYLES
+   ================================ */
+
+.onboarding-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 99999;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.onboarding-tooltip {
+    background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%);
+    border: 3px solid var(--primary);
+    border-radius: 16px;
+    padding: 0;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    animation: slideIn 0.4s ease-out;
+    overflow: hidden;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.onboarding-header {
+    background: linear-gradient(135deg, var(--primary) 0%, #2563eb 100%);
+    padding: 20px;
+    position: relative;
+}
+
+.onboarding-step {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: 600;
+    color: white;
+}
+
+.onboarding-header h3 {
+    color: white;
+    margin: 10px 0 0 0;
+    font-size: 1.3em;
+}
+
+.onboarding-skip {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: all 0.3s;
+}
+
+.onboarding-skip:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.onboarding-content {
+    padding: 25px;
+    color: var(--text-primary);
+    line-height: 1.7;
+}
+
+.onboarding-content h2 {
+    color: var(--primary);
+    margin-bottom: 15px;
+    font-size: 1.4em;
+}
+
+.onboarding-content ul, .onboarding-content ol {
+    margin: 15px 0;
+    padding-left: 25px;
+}
+
+.onboarding-content li {
+    margin: 10px 0;
+}
+
+.onboarding-content strong {
+    color: var(--primary);
+}
+
+.onboarding-content em {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.onboarding-footer {
+    padding: 20px;
+    background: var(--bg-darker);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.onboarding-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.3s;
+    flex: 1;
+}
+
+.onboarding-btn.primary {
+    background: linear-gradient(135deg, var(--primary) 0%, #2563eb 100%);
+    color: white;
+}
+
+.onboarding-btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+}
+
+.onboarding-btn.secondary {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+}
+
+.onboarding-btn.secondary:hover {
+    background: var(--bg-card);
+    border-color: var(--primary);
+}
+
+.onboarding-btn.success {
+    background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+    color: white;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 15px rgba(16, 185, 129, 0);
+    }
+}
+
+.onboarding-btn.success:hover {
+    transform: scale(1.05);
+}
+
+/* Highlight effect for targeted elements */
+.onboarding-highlight {
+    position: relative;
+    z-index: 100000 !important;
+    box-shadow: 0 0 0 4px var(--primary), 0 0 30px rgba(59, 130, 246, 0.6) !important;
+    border-radius: 8px;
+}
+
+.onboarding-pulse {
+    animation: highlightPulse 2s infinite;
+}
+
+@keyframes highlightPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 4px var(--primary), 0 0 30px rgba(59, 130, 246, 0.6);
+    }
+    50% {
+        box-shadow: 0 0 0 8px var(--primary), 0 0 50px rgba(59, 130, 246, 0.8);
+    }
+}
+
+/* Tutorial button */
+.tutorial-btn {
+    background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.tutorial-btn:hover {
+    transform: scale(1.1) rotate(15deg);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+}
+
+.tutorial-btn span {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Mobile responsive onboarding */
+@media (max-width: 768px) {
+    .onboarding-tooltip {
+        max-width: 95%;
+        position: fixed !important;
+        left: 50% !important;
+        top: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        right: auto !important;
+        bottom: auto !important;
+    }
+    
+    .onboarding-content {
+        padding: 20px;
+        font-size: 0.95em;
+    }
+    
+    .onboarding-footer {
+        flex-direction: column;
+    }
+    
+    .onboarding-btn {
+        width: 100%;
+    }
+}
+
+/* ================================
+   📚 KNOWLEDGE BASE STYLES
+   ================================ */
+
+.knowledge-btn {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    transition: all 0.3s;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    margin-left: 10px;
+}
+
+.knowledge-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.5);
+}
+
+.knowledge-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.knowledge-content {
+    background: var(--bg-card);
+    border: 3px solid var(--primary);
+    border-radius: 16px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideIn 0.4s ease-out;
+}
+
+.knowledge-header {
+    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    padding: 20px;
+    position: relative;
+}
+
+.knowledge-header h2 {
+    color: white;
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.close-knowledge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: all 0.3s;
+}
+
+.close-knowledge:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+.knowledge-body {
+    padding: 30px;
+    color: var(--text-primary);
+    line-height: 1.8;
+}
+
+.knowledge-formula {
+    background: var(--bg-darker);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary);
+    margin: 20px 0;
+    font-size: 1.1em;
+}
+
+.knowledge-formula code {
+    color: var(--primary);
+    font-size: 1.2em;
+    font-weight: 600;
+}
+
+.knowledge-body h3 {
+    color: var(--primary);
+    margin: 25px 0 15px 0;
+    font-size: 1.3em;
+}
+
+.knowledge-body h4 {
+    color: var(--success);
+    margin: 20px 0 10px 0;
+    font-size: 1.1em;
+}
+
+.knowledge-body ul, .knowledge-body ol {
+    margin: 15px 0;
+    padding-left: 25px;
+}
+
+.knowledge-body li {
+    margin: 10px 0;
+}
+
+.knowledge-body strong {
+    color: var(--primary);
+}
+
+.knowledge-body em {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.knowledge-body pre {
+    background: var(--bg-darker);
+    padding: 15px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    line-height: 1.5;
+}
+
+.knowledge-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+}
+
+.knowledge-body th, .knowledge-body td {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    text-align: left;
+}
+
+.knowledge-body th {
+    background: var(--bg-darker);
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.related-topics {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid var(--border-color);
+}
+
+.topic-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.topic-btn {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: all 0.3s;
+    text-transform: capitalize;
+}
+
+.topic-btn:hover {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.knowledge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.knowledge-card {
+    background: linear-gradient(135deg, var(--bg-hover) 0%, var(--bg-card) 100%);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: left;
+}
+
+.knowledge-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+}
+
+.knowledge-card h3 {
+    color: var(--primary);
+    margin: 0 0 10px 0;
+    font-size: 1.1em;
+}
+
+.knowledge-card code {
+    display: block;
+    background: var(--bg-darker);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    color: var(--success);
+    margin-top: 10px;
+}
+
+/* Mobile responsive knowledge base */
+@media (max-width: 768px) {
+    .knowledge-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+    
+    .knowledge-body {
+        padding: 20px;
+        font-size: 0.95em;
+    }
+    
+    .knowledge-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .topic-buttons {
+        flex-direction: column;
+    }
+    
+    .topic-btn {
+        width: 100%;
+    }
+}
