@@ -1,0 +1,383 @@
+/* 📊 Measurement Tools Styling */
+
+.measurement-tools-container {
+    position: fixed;
+    right: 20px;
+    top: 100px;
+    z-index: 9000;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.tools-panel {
+    background: white;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    border: 2px solid #e5e7eb;
+}
+
+.tools-panel h3 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tools-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tool-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 15px;
+    background: #f9fafb;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    min-width: 180px;
+}
+
+.tool-toggle-btn:hover {
+    background: #f3f4f6;
+    border-color: #4f46e5;
+    transform: translateX(-5px);
+}
+
+.tool-icon {
+    font-size: 20px;
+}
+
+.tool-status {
+    padding: 4px 10px;
+    background: #e5e7eb;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #9ca3af;
+}
+
+/* Tool Displays */
+.tool-display {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    border: 2px solid #e5e7eb;
+    max-width: 650px;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.display-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.display-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #1f2937;
+}
+
+.close-display {
+    width: 35px;
+    height: 35px;
+    background: #f3f4f6;
+    border: none;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #6b7280;
+}
+
+.close-display:hover {
+    background: #ef4444;
+    color: white;
+    transform: rotate(90deg);
+}
+
+/* Multimeter Styles */
+.multimeter-screen {
+    background: #0a0e27;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.main-reading {
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 20px;
+}
+
+.reading-value {
+    font-size: 48px;
+    font-weight: 700;
+    color: #10b981;
+    text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+}
+
+.reading-unit {
+    font-size: 24px;
+    color: #10b981;
+    margin-left: 10px;
+}
+
+.mode-selector {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.mode-btn {
+    padding: 10px 20px;
+    background: #1e293b;
+    border: 2px solid #334155;
+    border-radius: 8px;
+    color: #94a3b8;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.mode-btn:hover {
+    background: #334155;
+}
+
+.mode-btn.active {
+    background: #10b981;
+    border-color: #10b981;
+    color: white;
+}
+
+.secondary-readings {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.reading-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #1e293b;
+    border-radius: 8px;
+}
+
+.reading-item .label {
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.reading-item .value {
+    color: #10b981;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+}
+
+.connection-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #9ca3af;
+}
+
+.status-dot.active {
+    background: #10b981;
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+    animation: pulse 2s infinite;
+}
+
+/* Oscilloscope Styles */
+#oscilloscopeCanvas {
+    width: 100%;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.oscilloscope-controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.control-group label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+}
+
+.control-group select {
+    padding: 8px 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+}
+
+.control-group select:focus {
+    border-color: #4f46e5;
+}
+
+.trigger-btn {
+    padding: 8px 20px;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.trigger-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3);
+}
+
+.scope-readings {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+/* Logic Analyzer Styles */
+.logic-channels {
+    background: #0a0e27;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.channel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 8px;
+    background: #1e293b;
+    border-radius: 8px;
+}
+
+.channel-label {
+    color: #10b981;
+    font-weight: 700;
+    font-size: 13px;
+    min-width: 40px;
+}
+
+.channel-canvas {
+    flex: 1;
+    height: 40px;
+    border-radius: 6px;
+}
+
+.channel-status {
+    color: #10b981;
+    font-weight: 700;
+    font-size: 12px;
+    min-width: 50px;
+    text-align: right;
+}
+
+.logic-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.control-btn {
+    padding: 10px 20px;
+    background: #f3f4f6;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.control-btn:hover {
+    background: #e5e7eb;
+    border-color: #4f46e5;
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .measurement-tools-container {
+        right: 10px;
+        top: 80px;
+    }
+    
+    .tool-display {
+        max-width: calc(100vw - 20px);
+        right: 10px;
+    }
+    
+    .secondary-readings {
+        grid-template-columns: 1fr;
+    }
+    
+    .oscilloscope-controls {
+        flex-direction: column;
+    }
+}
