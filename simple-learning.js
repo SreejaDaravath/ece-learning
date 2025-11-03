@@ -8,6 +8,13 @@ const SimpleLearning = {
     },
     
     webcamStream: null,
+    screenStream: null,
+    currentRoom: null,
+    isVideoOn: false,
+    isAudioOn: false,
+    isScreenSharing: false,
+    whiteboardActive: false,
+    participants: [],
     
     init() {
         console.log('🎓 Initializing Simple Learning Platform...');
@@ -95,16 +102,54 @@ const SimpleLearning = {
         // Webcam Panel
         this.panels.webcam = this.createPanel(
             'webcam-panel',
-            '📹 Webcam - Show Your Work',
+            '📹 Collaboration Room - Meet & Learn',
             `
             <div class="webcam-container">
-                <div class="webcam-display" id="webcamDisplay">
-                    <p>📹 Click "Start Camera" to begin</p>
+                <div class="room-controls">
+                    <input type="text" class="room-input" id="roomCode" placeholder="Enter room code (e.g., ECE-123)">
+                    <button class="room-btn create" onclick="SimpleLearning.createRoom()">
+                        <span>➕</span>
+                        <span>Create Room</span>
+                    </button>
+                    <button class="room-btn join" onclick="SimpleLearning.joinRoom()">
+                        <span>🚪</span>
+                        <span>Join Room</span>
+                    </button>
                 </div>
+                
+                <div class="webcam-display" id="webcamDisplay">
+                    <p>� Create or join a room to start collaboration</p>
+                </div>
+                
                 <div class="webcam-controls">
-                    <button class="webcam-btn" onclick="SimpleLearning.startCamera()">📹 Start Camera</button>
-                    <button class="webcam-btn danger" onclick="SimpleLearning.stopCamera()">⏹️ Stop Camera</button>
-                    <button class="webcam-btn" onclick="SimpleLearning.takeSnapshot()">📸 Take Snapshot</button>
+                    <button class="webcam-btn" id="videoBtn" onclick="SimpleLearning.toggleVideo()">
+                        <span>📹</span>
+                        <span>Start Video</span>
+                    </button>
+                    <button class="webcam-btn" id="audioBtn" onclick="SimpleLearning.toggleAudio()">
+                        <span>🎤</span>
+                        <span>Unmute</span>
+                    </button>
+                    <button class="webcam-btn" id="screenBtn" onclick="SimpleLearning.shareScreen()">
+                        <span>🖥️</span>
+                        <span>Share Screen</span>
+                    </button>
+                    <button class="webcam-btn" id="whiteboardBtn" onclick="SimpleLearning.openWhiteboard()">
+                        <span>✏️</span>
+                        <span>Whiteboard</span>
+                    </button>
+                    <button class="webcam-btn danger" onclick="SimpleLearning.leaveRoom()">
+                        <span>�</span>
+                        <span>Leave Room</span>
+                    </button>
+                </div>
+                
+                <div class="participants-list" id="participantsList" style="display: none;">
+                    <h4>
+                        <span>👥</span>
+                        <span>Participants (<span id="participantCount">0</span>)</span>
+                    </h4>
+                    <div id="participantsContainer"></div>
                 </div>
             </div>
             `
@@ -265,62 +310,342 @@ const SimpleLearning = {
         alert('📊 Simulation results exported to downloads folder!');
     },
     
-    // Webcam Functions
-    async startCamera() {
-        try {
-            this.webcamStream = await navigator.mediaDevices.getUserMedia({ 
-                video: { width: 1280, height: 720 },
-                audio: false 
-            });
-            
-            const display = document.getElementById('webcamDisplay');
-            display.innerHTML = '<video autoplay playsinline></video>';
-            const video = display.querySelector('video');
-            video.srcObject = this.webcamStream;
-            
-            console.log('📹 Webcam started successfully');
-        } catch (error) {
-            console.error('Webcam error:', error);
-            alert('❌ Could not access webcam. Please check permissions.');
-        }
+    // Room Management Functions
+    createRoom() {
+        const roomCode = 'ECE-' + Math.random().toString(36).substr(2, 6).toUpperCase();
+        document.getElementById('roomCode').value = roomCode;
+        this.currentRoom = roomCode;
+        
+        this.initializeRoom();
+        
+        console.log('✅ Room created:', roomCode);
+        alert(`✅ Room Created!\n\nRoom Code: ${roomCode}\n\nShare this code with others to join.`);
     },
     
-    stopCamera() {
-        if (this.webcamStream) {
-            this.webcamStream.getTracks().forEach(track => track.stop());
-            this.webcamStream = null;
-            
-            const display = document.getElementById('webcamDisplay');
-            display.innerHTML = '<p>📹 Camera stopped</p>';
-            
-            console.log('⏹️ Webcam stopped');
-        }
-    },
-    
-    takeSnapshot() {
-        if (!this.webcamStream) {
-            alert('⚠️ Please start the camera first!');
+    joinRoom() {
+        const roomCode = document.getElementById('roomCode').value.trim();
+        
+        if (!roomCode) {
+            alert('⚠️ Please enter a room code!');
             return;
         }
         
-        const video = document.querySelector('#webcamDisplay video');
-        const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        canvas.getContext('2d').drawImage(video, 0, 0);
+        this.currentRoom = roomCode;
+        this.initializeRoom();
         
-        // Download snapshot
-        canvas.toBlob((blob) => {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `circuit-snapshot-${Date.now()}.png`;
-            a.click();
-            URL.revokeObjectURL(url);
-        });
+        console.log('✅ Joined room:', roomCode);
+        alert(`✅ Joined Room: ${roomCode}`);
+    },
+    
+    initializeRoom() {
+        const display = document.getElementById('webcamDisplay');
+        display.innerHTML = `
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Connected</span>
+            </div>
+            <div class="room-info">
+                Room: ${this.currentRoom}
+            </div>
+            <video autoplay playsinline muted style="width: 100%; height: 100%; object-fit: cover;"></video>
+        `;
         
-        console.log('📸 Snapshot taken');
-        alert('📸 Snapshot saved to downloads!');
+        // Show participants list
+        document.getElementById('participantsList').style.display = 'block';
+        
+        // Add yourself as participant
+        this.participants = [
+            { name: 'You', video: true, audio: false }
+        ];
+        this.updateParticipantsList();
+        
+        // Auto-start video
+        this.startVideo();
+    },
+    
+    leaveRoom() {
+        if (!this.currentRoom) {
+            alert('⚠️ You are not in a room!');
+            return;
+        }
+        
+        // Stop all streams
+        if (this.webcamStream) {
+            this.webcamStream.getTracks().forEach(track => track.stop());
+            this.webcamStream = null;
+        }
+        if (this.screenStream) {
+            this.screenStream.getTracks().forEach(track => track.stop());
+            this.screenStream = null;
+        }
+        
+        const display = document.getElementById('webcamDisplay');
+        display.innerHTML = '<p>👥 Create or join a room to start collaboration</p>';
+        
+        document.getElementById('participantsList').style.display = 'none';
+        document.getElementById('roomCode').value = '';
+        
+        this.currentRoom = null;
+        this.isVideoOn = false;
+        this.isAudioOn = false;
+        this.isScreenSharing = false;
+        this.participants = [];
+        
+        // Reset buttons
+        this.updateButtonStates();
+        
+        console.log('🚪 Left room');
+        alert('🚪 Left the room successfully!');
+    },
+    
+    // Video Control
+    async toggleVideo() {
+        if (!this.currentRoom) {
+            alert('⚠️ Please join a room first!');
+            return;
+        }
+        
+        if (this.isVideoOn) {
+            this.stopVideo();
+        } else {
+            await this.startVideo();
+        }
+    },
+    
+    async startVideo() {
+        try {
+            this.webcamStream = await navigator.mediaDevices.getUserMedia({ 
+                video: { width: 1280, height: 720 },
+                audio: this.isAudioOn
+            });
+            
+            const video = document.querySelector('#webcamDisplay video');
+            if (video) {
+                video.srcObject = this.webcamStream;
+            }
+            
+            this.isVideoOn = true;
+            this.updateButtonStates();
+            this.updateParticipantsList();
+            
+            console.log('📹 Video started');
+        } catch (error) {
+            console.error('Video error:', error);
+            alert('❌ Could not access camera. Please check permissions.');
+        }
+    },
+    
+    stopVideo() {
+        if (this.webcamStream) {
+            this.webcamStream.getVideoTracks().forEach(track => track.stop());
+        }
+        
+        this.isVideoOn = false;
+        this.updateButtonStates();
+        this.updateParticipantsList();
+        
+        console.log('📹 Video stopped');
+    },
+    
+    // Audio Control
+    toggleAudio() {
+        if (!this.currentRoom) {
+            alert('⚠️ Please join a room first!');
+            return;
+        }
+        
+        this.isAudioOn = !this.isAudioOn;
+        
+        if (this.webcamStream) {
+            this.webcamStream.getAudioTracks().forEach(track => {
+                track.enabled = this.isAudioOn;
+            });
+        }
+        
+        this.updateButtonStates();
+        this.updateParticipantsList();
+        
+        console.log(this.isAudioOn ? '🎤 Unmuted' : '🔇 Muted');
+    },
+    
+    // Screen Share
+    async shareScreen() {
+        if (!this.currentRoom) {
+            alert('⚠️ Please join a room first!');
+            return;
+        }
+        
+        if (this.isScreenSharing) {
+            this.stopScreenShare();
+            return;
+        }
+        
+        try {
+            this.screenStream = await navigator.mediaDevices.getDisplayMedia({
+                video: { cursor: 'always' },
+                audio: false
+            });
+            
+            const video = document.querySelector('#webcamDisplay video');
+            if (video) {
+                video.srcObject = this.screenStream;
+            }
+            
+            this.screenStream.getVideoTracks()[0].onended = () => {
+                this.stopScreenShare();
+            };
+            
+            this.isScreenSharing = true;
+            this.updateButtonStates();
+            
+            console.log('🖥️ Screen sharing started');
+        } catch (error) {
+            console.error('Screen share error:', error);
+            alert('❌ Could not share screen.');
+        }
+    },
+    
+    stopScreenShare() {
+        if (this.screenStream) {
+            this.screenStream.getTracks().forEach(track => track.stop());
+            this.screenStream = null;
+        }
+        
+        // Switch back to webcam if it was on
+        if (this.isVideoOn && this.webcamStream) {
+            const video = document.querySelector('#webcamDisplay video');
+            if (video) {
+                video.srcObject = this.webcamStream;
+            }
+        }
+        
+        this.isScreenSharing = false;
+        this.updateButtonStates();
+        
+        console.log('🖥️ Screen sharing stopped');
+    },
+    
+    // Whiteboard
+    openWhiteboard() {
+        if (!this.currentRoom) {
+            alert('⚠️ Please join a room first!');
+            return;
+        }
+        
+        this.whiteboardActive = !this.whiteboardActive;
+        
+        if (this.whiteboardActive) {
+            const display = document.getElementById('webcamDisplay');
+            const existingElements = display.innerHTML;
+            
+            display.innerHTML = existingElements + `
+                <canvas id="whiteboardCanvas" 
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; z-index: 10;">
+                </canvas>
+            `;
+            
+            this.initWhiteboard();
+            console.log('✏️ Whiteboard opened');
+        } else {
+            const canvas = document.getElementById('whiteboardCanvas');
+            if (canvas) canvas.remove();
+            console.log('✏️ Whiteboard closed');
+        }
+        
+        this.updateButtonStates();
+    },
+    
+    initWhiteboard() {
+        const canvas = document.getElementById('whiteboardCanvas');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        
+        let drawing = false;
+        ctx.strokeStyle = '#4f46e5';
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        
+        canvas.onmousedown = (e) => {
+            drawing = true;
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        };
+        
+        canvas.onmousemove = (e) => {
+            if (!drawing) return;
+            ctx.lineTo(e.offsetX, e.offsetY);
+            ctx.stroke();
+        };
+        
+        canvas.onmouseup = () => drawing = false;
+        canvas.onmouseleave = () => drawing = false;
+    },
+    
+    // Update UI
+    updateButtonStates() {
+        const videoBtn = document.getElementById('videoBtn');
+        const audioBtn = document.getElementById('audioBtn');
+        const screenBtn = document.getElementById('screenBtn');
+        const whiteboardBtn = document.getElementById('whiteboardBtn');
+        
+        if (videoBtn) {
+            videoBtn.className = `webcam-btn ${this.isVideoOn ? 'active' : ''}`;
+            videoBtn.innerHTML = `
+                <span>${this.isVideoOn ? '📹' : '🚫'}</span>
+                <span>${this.isVideoOn ? 'Stop Video' : 'Start Video'}</span>
+            `;
+        }
+        
+        if (audioBtn) {
+            audioBtn.className = `webcam-btn ${this.isAudioOn ? 'active' : ''}`;
+            audioBtn.innerHTML = `
+                <span>${this.isAudioOn ? '🎤' : '🔇'}</span>
+                <span>${this.isAudioOn ? 'Mute' : 'Unmute'}</span>
+            `;
+        }
+        
+        if (screenBtn) {
+            screenBtn.className = `webcam-btn ${this.isScreenSharing ? 'success' : ''}`;
+            screenBtn.innerHTML = `
+                <span>🖥️</span>
+                <span>${this.isScreenSharing ? 'Stop Share' : 'Share Screen'}</span>
+            `;
+        }
+        
+        if (whiteboardBtn) {
+            whiteboardBtn.className = `webcam-btn ${this.whiteboardActive ? 'active' : ''}`;
+            whiteboardBtn.innerHTML = `
+                <span>✏️</span>
+                <span>${this.whiteboardActive ? 'Close Board' : 'Whiteboard'}</span>
+            `;
+        }
+    },
+    
+    updateParticipantsList() {
+        const container = document.getElementById('participantsContainer');
+        const count = document.getElementById('participantCount');
+        
+        if (!container) return;
+        
+        // Update your status
+        this.participants[0].video = this.isVideoOn;
+        this.participants[0].audio = this.isAudioOn;
+        
+        count.textContent = this.participants.length;
+        
+        container.innerHTML = this.participants.map(p => `
+            <div class="participant-item">
+                <div class="participant-avatar">👤</div>
+                <span>${p.name}</span>
+                <div class="participant-status">
+                    <span>${p.video ? '📹' : '🚫'}</span>
+                    <span>${p.audio ? '🎤' : '🔇'}</span>
+                </div>
+            </div>
+        `).join('');
     }
 };
 
