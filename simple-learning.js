@@ -650,8 +650,17 @@ const SimpleLearning = {
 };
 
 // Initialize when DOM is ready
+console.log('🔍 Simple Learning script loaded');
+
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => SimpleLearning.init());
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('📚 DOM Ready - Initializing...');
+        SimpleLearning.init();
+    });
 } else {
+    console.log('📚 DOM Already Ready - Initializing...');
     SimpleLearning.init();
 }
+
+// Make it globally accessible for debugging
+window.SimpleLearning = SimpleLearning;
