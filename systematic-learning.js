@@ -44,7 +44,7 @@ const SystematicLearning = {
                             <span class="status-badge pending">Start</span>
                         </div>
                     </div>
-                    <div class="step-content collapsed">
+                    <div class="step-content">
                         <div class="step-actions">
                             <button class="action-btn primary" onclick="SystematicLearning.watchDemo()">
                                 <span class="btn-icon">▶️</span>
@@ -67,7 +67,7 @@ const SystematicLearning = {
                             <span class="status-badge locked">🔒</span>
                         </div>
                     </div>
-                    <div class="step-content collapsed">
+                    <div class="step-content">
                         <div class="step-actions">
                             <button class="action-btn primary" onclick="SystematicLearning.openAITutor()">
                                 <span class="btn-icon">💬</span>
@@ -101,7 +101,7 @@ const SystematicLearning = {
                             <span class="status-badge locked">🔒</span>
                         </div>
                     </div>
-                    <div class="step-content collapsed">
+                    <div class="step-content">
                         <div class="step-actions">
                             <div class="webcam-info">
                                 <p>📷 <strong>Optional:</strong> Show your breadboard circuit for AI feedback</p>
@@ -134,7 +134,7 @@ const SystematicLearning = {
                             <span class="status-badge locked">🔒</span>
                         </div>
                     </div>
-                    <div class="step-content collapsed">
+                    <div class="step-content">
                         <div class="step-actions">
                             <button class="action-btn primary" onclick="SystematicLearning.startBuilding()">
                                 <span class="btn-icon">🔧</span>
@@ -161,7 +161,7 @@ const SystematicLearning = {
                             <span class="status-badge locked">🔒</span>
                         </div>
                     </div>
-                    <div class="step-content collapsed">
+                    <div class="step-content">
                         <div class="step-actions">
                             <button class="action-btn success" onclick="SystematicLearning.submitCircuit()">
                                 <span class="btn-icon">✅</span>
@@ -175,40 +175,29 @@ const SystematicLearning = {
             
             <!-- Dashboard Controls -->
             <div class="dashboard-controls">
-                <button class="control-btn" onclick="SystematicLearning.previousStep()">
-                    ⬅️ Previous Step
-                </button>
-                <button class="control-btn primary" onclick="SystematicLearning.nextStep()">
-                    Next Step ➡️
-                </button>
                 <button class="control-btn secondary" onclick="SystematicLearning.toggleDashboard()">
-                    Hide Dashboard
+                    ◀️ Hide Panel
                 </button>
             </div>
-            
-            <!-- Floating Toggle Button -->
-            <button class="dashboard-toggle-btn" onclick="SystematicLearning.toggleDashboard()">
-                📚 Learning Path
-            </button>
         `;
         
         document.body.appendChild(dashboard);
+        
+        // Create Floating Toggle Button (separate element)
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'dashboard-toggle-btn';
+        toggleBtn.onclick = () => SystematicLearning.toggleDashboard();
+        toggleBtn.innerHTML = '📚 Learning Path';
+        document.body.appendChild(toggleBtn);
+        
         this.updateStepProgress();
     },
     
     // Setup event listeners
     setupEventListeners() {
-        // Click on step header to expand/collapse
-        document.querySelectorAll('.step-header').forEach(header => {
-            header.addEventListener('click', (e) => {
-                const step = e.currentTarget.closest('.learning-step');
-                const stepNum = parseInt(step.dataset.step);
-                
-                // Only allow expanding current or completed steps
-                if (stepNum <= this.currentStep) {
-                    this.toggleStepContent(step);
-                }
-            });
+        // Show all content by default - no collapsing
+        document.querySelectorAll('.step-content').forEach(content => {
+            content.classList.remove('collapsed');
         });
         
         // Keyboard navigation
@@ -220,24 +209,10 @@ const SystematicLearning = {
         });
     },
     
-    // Toggle step content expand/collapse
+    // Toggle step content expand/collapse - DISABLED (always show all)
     toggleStepContent(step) {
-        const content = step.querySelector('.step-content');
-        const isCollapsed = content.classList.contains('collapsed');
-        
-        // Collapse all other steps
-        document.querySelectorAll('.step-content').forEach(c => {
-            c.classList.add('collapsed');
-        });
-        
-        // Toggle current step
-        if (isCollapsed) {
-            content.classList.remove('collapsed');
-            step.classList.add('expanded');
-        } else {
-            content.classList.add('collapsed');
-            step.classList.remove('expanded');
-        }
+        // All content always visible - no toggle needed
+        return;
     },
     
     // Watch demo video (Step 1)
