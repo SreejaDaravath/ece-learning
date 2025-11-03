@@ -1,7 +1,7 @@
 {
   "name": "ece-master-ultimate",
-  "version": "6.0.0",
-  "description": "ECE MASTER v6.0 - Ultimate learning platform with AI Tutor + Webcam, Live Circuit Simulation, Certificate System, and comprehensive hands-on learning features!",
+  "version": "6.1.0",
+  "description": "ECE MASTER v6.1 - Ultimate learning platform with Systematic Step-by-Step Learning, AI Tutor + Webcam, Live Circuit Simulation, Certificate System, and comprehensive hands-on learning features!",
   "main": "index.html",
   "scripts": {
     "start": "http-server -c-1 . -p 8002",
