@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎓 ECE MASTER - Learn by Doing!</title>
+    <link rel="stylesheet" href="style-v2.css?v=20251102v20">
+</head>
+<body>
+    <!-- 🎮 Game Header -->
+    <header class="game-header">
+        <div class="header-left">
+            <h1>⚡ ECE MASTER</h1>
+            <div class="level-badge">
+                <span class="module-name" id="moduleName">Basic Electronics</span>
+                <span class="level-number">Level <span id="levelNum">1</span>/50</span>
+            </div>
+        </div>
+        <div class="header-center">
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+                <span class="progress-text" id="progressText">0%</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="score-display">
+                <span class="score-label">Score:</span>
+                <span class="score-value" id="scoreValue">0</span>
+            </div>
+            <div class="score-display">
+                <span class="score-label">High:</span>
+                <span class="score-value gold" id="highScore">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- 🎯 Main Game Container -->
+    <div class="game-container">
+        
+        <!-- Left Panel - Component Palette -->
+        <aside class="component-palette">
+            <h3>🔧 Components</h3>
+            <div class="palette-section" id="componentsList">
+                <!-- Components will be dynamically loaded -->
+            </div>
+            
+            <div class="palette-divider"></div>
+            
+            <h3>📊 Tools</h3>
+            <div class="tools-section">
+                <button class="tool-btn" id="multimeterBtn">
+                    <span class="tool-icon">🔴</span>
+                    <span class="tool-name">Multimeter</span>
+                </button>
+                <button class="tool-btn" id="logicAnalyzerBtn">
+                    <span class="tool-icon">📈</span>
+                    <span class="tool-name">Logic Analyzer</span>
+                </button>
+                <button class="tool-btn" id="oscilloscopeBtn">
+                    <span class="tool-icon">〰️</span>
+                    <span class="tool-name">Oscilloscope</span>
+                </button>
+            </div>
+
+            <div class="palette-divider"></div>
+            
+            <div class="quick-actions">
+                <button class="action-btn clear-btn" id="clearCircuit">
+                    <span>🗑️</span> Clear All
+                </button>
+                <button class="action-btn hint-btn" id="getHint">
+                    <span>💡</span> Hint (-25pts)
+                </button>
+            </div>
+        </aside>
+
+        <!-- Center Panel - Workspace -->
+        <main class="workspace">
+            <!-- Task Description -->
+            <div class="task-panel" id="taskPanel">
+                <div class="task-header">
+                    <h2 class="task-title" id="taskTitle">Connect Your First LED</h2>
+                    <div class="timer" id="timer">
+                        <span class="timer-icon">⏱️</span>
+                        <span class="timer-value" id="timerValue">60s</span>
+                    </div>
+                </div>
+                <p class="task-description" id="taskDescription">
+                    Drag a battery and LED. Connect them. Watch it glow! ⚡
+                </p>
+                <div class="task-goal">
+                    <strong>Goal:</strong> <span id="taskGoal">Make the LED glow</span>
+                </div>
+            </div>
+
+            <!-- Demo Panel (shows at level start) -->
+            <div class="demo-panel hidden" id="demoPanel">
+                <div class="demo-header">
+                    <h3>📺 Watch Demo (10 seconds)</h3>
+                    <div class="demo-timer" id="demoTimer">10s</div>
+                </div>
+                <canvas id="demoCanvas" width="400" height="300"></canvas>
+                <button class="skip-demo-btn" id="skipDemo">Skip Demo ⏭️</button>
+            </div>
+
+            <!-- Breadboard Canvas -->
+            <div class="breadboard-container" id="breadboardContainer">
+                <canvas id="breadboard" width="800" height="600"></canvas>
+                
+                <!-- Measurement Overlay -->
+                <div class="measurement-overlay hidden" id="measurementOverlay">
+                    <div class="measurement-box">
+                        <div class="measurement-title">📊 Measurement</div>
+                        <div class="measurement-value" id="measurementValue">--</div>
+                        <button class="close-measurement" id="closeMeasurement">✕</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <button class="control-btn test-btn" id="testCircuit">
+                    <span class="btn-icon">🧪</span>
+                    <span class="btn-text">Test Circuit</span>
+                </button>
+                <button class="control-btn submit-btn" id="submitAnswer">
+                    <span class="btn-icon">✓</span>
+                    <span class="btn-text">Submit Answer</span>
+                </button>
+                <button class="control-btn next-btn hidden" id="nextLevel">
+                    <span class="btn-icon">→</span>
+                    <span class="btn-text">Next Level</span>
+                </button>
+            </div>
+
+            <!-- Feedback Panel -->
+            <div class="feedback-panel hidden" id="feedbackPanel">
+                <div class="feedback-content" id="feedbackContent">
+                    <!-- Feedback will be shown here -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Panel - Info & Stats -->
+        <aside class="info-panel">
+            <h3>📈 Current Status</h3>
+            
+            <div class="stat-card">
+                <div class="stat-label">Phase</div>
+                <div class="stat-value" id="phaseStatus">Learn</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Attempts</div>
+                <div class="stat-value" id="attemptsValue">0/3</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Time Taken</div>
+                <div class="stat-value" id="timeTaken">0s</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <h3>🎯 Measurements</h3>
+            <div class="measurements-list" id="measurementsList">
+                <div class="measurement-item">
+                    <span class="measure-label">Voltage:</span>
+                    <span class="measure-value" id="voltageDisplay">--</span>
+                </div>
+                <div class="measurement-item">
+                    <span class="measure-label">Current:</span>
+                    <span class="measure-value" id="currentDisplay">--</span>
+                </div>
+                <div class="measurement-item">
+                    <span class="measure-label">Resistance:</span>
+                    <span class="measure-value" id="resistanceDisplay">--</span>
+                </div>
+                <div class="measurement-item">
+                    <span class="measure-label">Power:</span>
+                    <span class="measure-value" id="powerDisplay">--</span>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <h3>🏆 Achievements</h3>
+            <div class="achievements-list" id="achievementsList">
+                <div class="achievement-badge locked">
+                    <span class="badge-icon">🎓</span>
+                    <span class="badge-name">Scholar</span>
+                </div>
+                <div class="achievement-badge locked">
+                    <span class="badge-icon">⚡</span>
+                    <span class="badge-name">Speed Demon</span>
+                </div>
+                <div class="achievement-badge locked">
+                    <span class="badge-icon">🎯</span>
+                    <span class="badge-name">Perfectionist</span>
+                </div>
+                <div class="achievement-badge locked">
+                    <span class="badge-icon">🔥</span>
+                    <span class="badge-name">Hot Streak</span>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <button class="reset-btn" id="resetProgress">
+                <span>🔄</span> Reset Progress
+            </button>
+        </aside>
+    </div>
+
+    <!-- 🎉 Success Modal -->
+    <div class="modal hidden" id="successModal">
+        <div class="modal-content success">
+            <div class="modal-header">
+                <h2>🎉 Level Complete!</h2>
+            </div>
+            <div class="modal-body">
+                <div class="score-breakdown">
+                    <div class="score-item">
+                        <span>Base Score:</span>
+                        <span class="score-points" id="baseScore">+100</span>
+                    </div>
+                    <div class="score-item">
+                        <span>Time Bonus:</span>
+                        <span class="score-points" id="timeBonus">+50</span>
+                    </div>
+                    <div class="score-item">
+                        <span>First Attempt:</span>
+                        <span class="score-points" id="attemptBonus">+100</span>
+                    </div>
+                    <div class="score-item total">
+                        <span>Total:</span>
+                        <span class="score-points" id="totalScore">+250</span>
+                    </div>
+                </div>
+                <div class="new-achievement" id="newAchievement"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn" id="continueBtn">Continue →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔧 Hint Modal -->
+    <div class="modal hidden" id="hintModal">
+        <div class="modal-content hint">
+            <div class="modal-header">
+                <h2>💡 Hint</h2>
+                <button class="close-modal" id="closeHint">✕</button>
+            </div>
+            <div class="modal-body">
+                <p class="hint-text" id="hintText"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📊 Multimeter Modal -->
+    <div class="modal hidden" id="multimeterModal">
+        <div class="modal-content multimeter">
+            <div class="modal-header">
+                <h2>🔴 Multimeter</h2>
+                <button class="close-modal" id="closeMultimeter">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="multimeter-display">
+                    <div class="display-screen">
+                        <span class="display-value" id="multimeterReading">0.00</span>
+                        <span class="display-unit" id="multimeterUnit">V</span>
+                    </div>
+                </div>
+                <div class="multimeter-controls">
+                    <button class="meter-mode-btn active" data-mode="voltage">Voltage (V)</button>
+                    <button class="meter-mode-btn" data-mode="current">Current (A)</button>
+                    <button class="meter-mode-btn" data-mode="resistance">Resistance (Ω)</button>
+                </div>
+                <p class="meter-instruction">Click two points on the circuit to measure</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="levels-data.js?v=20251102v20"></script>
+    <script src="game-engine-v2.js?v=20251102v20"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "ece-master-final",
+  "version": "3.0.0",
+  "description": "ECE MASTER - Interactive electronics learning game (static web app)",
+  "main": "index.html",
+  "scripts": {
+    "start": "http-server -c-1 . -p 8002",
+    "serve": "npm run start"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "license": "MIT"
+}

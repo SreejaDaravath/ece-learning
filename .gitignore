@@ -1,0 +1,32 @@
+# Ignore node modules
+node_modules/
+
+# Ignore build artifacts (if any)
+dist/
+build/
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Ignore editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Ignore log files
+*.log
+npm-debug.log*
+
+# Ignore environment files (if you add analytics keys later)
+.env
+.env.local
+.env.*.local
+
+# Ignore lock files (keep package-lock for reproducibility)
+# package-lock.json (optional - remove this line to track it)
+yarn.lock
+pnpm-lock.yaml
