@@ -1,12 +1,12 @@
 ﻿# 🎓 ECE MASTER - Learn Electronics by Doing!
 
-[![GitHub Pages](https://img.shields.io/badge/demo-live-brightgreen)](https://yourusername.github.io/ece-learning/)
+[![GitHub Pages](https://img.shields.io/badge/demo-live-brightgreen)](https://sreejadaravath.github.io/ece-learning/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 **Interactive electronics learning game with 50 levels.** Build circuits, connect wires, master voltage dividers, logic gates, and digital circuits. Learn ECE hands-on!
 
-🚀 [**Play Now**](https://yourusername.github.io/ece-learning/) • 📖 [User Guide](USER_GUIDE.md) • 🐛 [Report Issue](https://github.com/yourusername/ece-learning/issues)
+🚀 [**Play Now**](https://sreejadaravath.github.io/ece-learning/) • 📖 [User Guide](USER_GUIDE.md) • 🐛 [Report Issue](https://github.com/SreejaDaravath/ece-learning/issues)
 
 ---
 
