@@ -1329,17 +1329,34 @@ const SimpleLearning = {
 };
 
 // Initialize when DOM is ready
-console.log('🔍 Simple Learning script loaded');
+console.log('🔍 Simple Learning script loaded - v3');
+console.log('✅ All features:', {
+    aiTutor: 'Advanced ChatGPT-like interface',
+    collaboration: 'Room creation, video, audio, screen share, whiteboard',
+    simulation: 'Circuit simulation with results',
+    whiteboard: 'ECE symbols + drawing tools'
+});
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         console.log('📚 DOM Ready - Initializing...');
-        SimpleLearning.init();
+        try {
+            SimpleLearning.init();
+            console.log('✅ SimpleLearning initialized successfully!');
+        } catch (error) {
+            console.error('❌ Initialization error:', error);
+        }
     });
 } else {
     console.log('📚 DOM Already Ready - Initializing...');
-    SimpleLearning.init();
+    try {
+        SimpleLearning.init();
+        console.log('✅ SimpleLearning initialized successfully!');
+    } catch (error) {
+        console.error('❌ Initialization error:', error);
+    }
 }
 
 // Make it globally accessible for debugging
 window.SimpleLearning = SimpleLearning;
+console.log('🌐 SimpleLearning is now globally accessible as window.SimpleLearning');
