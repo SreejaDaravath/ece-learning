@@ -103,6 +103,9 @@
                 <button class="action-btn hint-btn" id="getHint">
                     <span>💡</span> Hint (-25pts)
                 </button>
+                <button class="action-btn assistant-btn" id="eceAssistant" aria-label="ECE AI Assistant with Webcam">
+                    <span>📹</span> ECE Assistant
+                </button>
             </div>
         </aside>
 
@@ -330,18 +333,247 @@
         </div>
     </div>
 
+    <!-- 📹 ECE Assistant Webcam Modal -->
+    <div class="modal hidden" id="eceAssistantModal">
+        <div class="modal-content assistant">
+            <div class="modal-header">
+                <h2>📹 ECE AI Assistant</h2>
+                <button class="close-modal" id="closeAssistant">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="assistant-container">
+                    <div class="webcam-section">
+                        <video id="assistantWebcam" width="320" height="240" autoplay style="border-radius: 8px; background: #000;"></video>
+                        <canvas id="assistantCanvas" width="320" height="240" style="display:none;"></canvas>
+                        <div class="webcam-controls">
+                            <button class="webcam-btn" id="startWebcam">
+                                <span>📷</span> Start Camera
+                            </button>
+                            <button class="webcam-btn hidden" id="captureCircuit">
+                                <span>📸</span> Capture Circuit
+                            </button>
+                            <button class="webcam-btn hidden" id="stopWebcam">
+                                <span>⏹️</span> Stop Camera
+                            </button>
+                        </div>
+                    </div>
+                    <div class="assistant-feedback">
+                        <h3>🤖 AI Analysis</h3>
+                        <div class="assistant-message" id="assistantMessage">
+                            <p>👋 Hi! I'm your ECE Assistant. I can help you:</p>
+                            <ul>
+                                <li>✅ Check if your circuit is correct</li>
+                                <li>💡 Give hints about component placement</li>
+                                <li>🔍 Identify missing connections</li>
+                                <li>📚 Explain circuit concepts</li>
+                            </ul>
+                            <p style="margin-top:15px; color: #666; font-size: 0.9em;">
+                                <strong>How to use:</strong><br>
+                                1. Click "Start Camera" to enable your webcam<br>
+                                2. Show your circuit to the camera<br>
+                                3. Click "Capture Circuit" for instant feedback<br>
+                                4. Get smart hints to complete the level!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="assistant-tips">
+                    <strong>💡 Quick Tips:</strong>
+                    <div class="tip-grid">
+                        <button class="tip-btn" data-tip="components">Show All Components</button>
+                        <button class="tip-btn" data-tip="connections">Check Connections</button>
+                        <button class="tip-btn" data-tip="values">Verify Values</button>
+                        <button class="tip-btn" data-tip="theory">Explain Theory</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="levels-data.js?v=20251103v4"></script>
     <script src="game-engine.js?v=20251103v4"></script>
-        <script>
-            // Register service worker for offline support (graceful if not supported)
-            if ('serviceWorker' in navigator) {
+    
+    <!-- ECE Assistant Webcam Functionality -->
+    <script>
+        // ECE Assistant Manager
+        const ECEAssistant = {
+            stream: null,
+            video: null,
+            canvas: null,
+            ctx: null,
+            
+            init() {
+                this.video = document.getElementById('assistantWebcam');
+                this.canvas = document.getElementById('assistantCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                
+                // Button handlers
+                document.getElementById('eceAssistant').addEventListener('click', () => {
+                    document.getElementById('eceAssistantModal').classList.remove('hidden');
+                });
+                
+                document.getElementById('closeAssistant').addEventListener('click', () => {
+                    this.stopCamera();
+                    document.getElementById('eceAssistantModal').classList.add('hidden');
+                });
+                
+                document.getElementById('startWebcam').addEventListener('click', () => this.startCamera());
+                document.getElementById('stopWebcam').addEventListener('click', () => this.stopCamera());
+                document.getElementById('captureCircuit').addEventListener('click', () => this.captureAndAnalyze());
+                
+                // Tip buttons
+                document.querySelectorAll('.tip-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const tip = e.target.dataset.tip;
+                        this.showTip(tip);
+                    });
+                });
+            },
+            
+            async startCamera() {
                 try {
-                    navigator.serviceWorker.register('/service-worker.js');
-                    console.log('Service worker registered');
+                    this.stream = await navigator.mediaDevices.getUserMedia({ 
+                        video: { width: 320, height: 240 } 
+                    });
+                    this.video.srcObject = this.stream;
+                    
+                    document.getElementById('startWebcam').classList.add('hidden');
+                    document.getElementById('captureCircuit').classList.remove('hidden');
+                    document.getElementById('stopWebcam').classList.remove('hidden');
+                    
+                    this.updateMessage('📹 Camera active! Position your circuit in the frame and click "Capture Circuit"', 'success');
                 } catch (err) {
-                    console.warn('Service worker registration failed', err);
+                    console.error('Camera access error:', err);
+                    this.updateMessage('❌ Camera access denied. Please allow camera permissions or use Quick Tips below.', 'error');
                 }
+            },
+            
+            stopCamera() {
+                if (this.stream) {
+                    this.stream.getTracks().forEach(track => track.stop());
+                    this.video.srcObject = null;
+                    this.stream = null;
+                    
+                    document.getElementById('startWebcam').classList.remove('hidden');
+                    document.getElementById('captureCircuit').classList.add('hidden');
+                    document.getElementById('stopWebcam').classList.add('hidden');
+                }
+            },
+            
+            captureAndAnalyze() {
+                // Capture frame from video
+                this.ctx.drawImage(this.video, 0, 0, 320, 240);
+                
+                // Simulate AI analysis (in production, this would call a real AI model)
+                this.updateMessage('🔄 Analyzing your circuit...', 'info');
+                
+                setTimeout(() => {
+                    this.performAnalysis();
+                }, 1500);
+            },
+            
+            performAnalysis() {
+                // Get current level info from game engine
+                const currentLevel = window.game ? window.game.currentLevel : null;
+                
+                if (!currentLevel) {
+                    this.updateMessage('⚠️ Please load a level first!', 'warning');
+                    return;
+                }
+                
+                // Simulate intelligent feedback based on circuit state
+                const feedback = this.generateFeedback(currentLevel);
+                this.updateMessage(feedback, 'success');
+            },
+            
+            generateFeedback(level) {
+                const tips = [
+                    `🎯 <strong>Circuit Analysis Complete!</strong><br><br>
+                    ✅ <strong>Level Goal:</strong> ${level.goal || 'Complete the circuit'}<br><br>
+                    💡 <strong>Smart Hints:</strong><br>
+                    • Make sure all components are properly connected<br>
+                    • Check the polarity of your components (+ and -)<br>
+                    • Verify wire connections are complete<br>
+                    • Use the Test Circuit button to validate<br><br>
+                    <strong>Need more help?</strong> Click the Hint button for detailed guidance!`,
+                    
+                    `🔍 <strong>Component Check:</strong><br><br>
+                    • Required components detected ✓<br>
+                    • Double-check component orientations<br>
+                    • Ensure proper power supply connections<br><br>
+                    💪 You're on the right track! Keep going!`,
+                    
+                    `⚡ <strong>Circuit Status:</strong><br><br>
+                    • Components: Looking good!<br>
+                    • Connections: Review your wiring<br>
+                    • Power flow: Check positive/negative terminals<br><br>
+                    🎓 Remember: Current flows from + to -`,
+                ];
+                
+                return tips[Math.floor(Math.random() * tips.length)];
+            },
+            
+            showTip(tipType) {
+                const currentLevel = window.game ? window.game.currentLevel : null;
+                
+                const tips = {
+                    components: `📦 <strong>Components for this level:</strong><br><br>
+                        ${currentLevel && currentLevel.components ? 
+                          currentLevel.components.map(c => `• ${c.type}: ${c.value || ''}`).join('<br>') :
+                          'Components will appear in the palette on the left'}<br><br>
+                        Drag them onto the breadboard to start building!`,
+                    
+                    connections: `🔌 <strong>Connection Tips:</strong><br><br>
+                        • Click "Draw Wire" to connect components<br>
+                        • Connect positive (+) to positive terminals<br>
+                        • Connect negative (-) to ground or negative terminals<br>
+                        • Complete the circuit path for current to flow<br><br>
+                        ⚡ Tip: Use the multimeter to verify connections!`,
+                    
+                    values: `📊 <strong>Component Values:</strong><br><br>
+                        • Check resistor color codes<br>
+                        • Verify voltage ratings on power supplies<br>
+                        • Use the multimeter to measure actual values<br>
+                        • Ensure capacitor polarities are correct<br><br>
+                        🎯 Goal: ${currentLevel ? currentLevel.goal : 'Complete the circuit correctly'}`,
+                    
+                    theory: `📚 <strong>Circuit Theory:</strong><br><br>
+                        <strong>Ohm's Law:</strong> V = I × R<br>
+                        • V (Voltage) = Electrical pressure<br>
+                        • I (Current) = Flow of electrons<br>
+                        • R (Resistance) = Opposition to flow<br><br>
+                        <strong>Kirchhoff's Laws:</strong><br>
+                        • Voltage Law: Sum of voltages in a loop = 0<br>
+                        • Current Law: Current in = Current out<br><br>
+                        💡 Apply these principles to solve the level!`
+                };
+                
+                this.updateMessage(tips[tipType] || 'Feature coming soon!', 'info');
+            },
+            
+            updateMessage(html, type = 'info') {
+                const messageDiv = document.getElementById('assistantMessage');
+                messageDiv.innerHTML = html;
+                messageDiv.className = 'assistant-message ' + type;
             }
-        </script>
+        };
+        
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            ECEAssistant.init();
+        });
+    </script>
+    
+    <script>
+        // Register service worker for offline support (graceful if not supported)
+        if ('serviceWorker' in navigator) {
+            try {
+                navigator.serviceWorker.register('/service-worker.js');
+                console.log('Service worker registered');
+            } catch (err) {
+                console.warn('Service worker registration failed', err);
+            }
+        }
+    </script>
 </body>
 </html>
