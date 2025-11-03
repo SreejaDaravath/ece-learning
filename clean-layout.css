@@ -45,10 +45,11 @@ body {
 main {
     margin-left: 320px !important;
     margin-right: 20px !important;
-    margin-top: 180px !important;
+    margin-top: 190px !important;
     padding: 20px;
     transition: all 0.3s ease;
     max-width: calc(100% - 360px);
+    min-height: calc(100vh - 210px);
 }
 
 /* When sidebar is present */
@@ -58,6 +59,7 @@ main {
 main.with-sidebar {
     margin-left: 320px !important;
     max-width: calc(100% - 360px);
+    margin-top: 190px !important;
 }
 
 /* Clean Header - Remove Clutter */
