@@ -64,17 +64,79 @@ const SimpleLearning = {
         // AI Tutor Panel
         this.panels.aiTutor = this.createPanel(
             'ai-tutor-panel',
-            '🤖 AI Tutor - Ask Anything',
+            '🤖 AI Tutor - Your Personal Electronics Assistant',
             `
             <div class="ai-chat-container">
+                <div class="ai-features-bar">
+                    <button class="feature-btn" onclick="SimpleLearning.showExamples()">
+                        <span>💡</span>
+                        <span>Examples</span>
+                    </button>
+                    <button class="feature-btn" onclick="SimpleLearning.explainConcept()">
+                        <span>📚</span>
+                        <span>Explain</span>
+                    </button>
+                    <button class="feature-btn" onclick="SimpleLearning.solveCircuit()">
+                        <span>🧮</span>
+                        <span>Solve</span>
+                    </button>
+                    <button class="feature-btn" onclick="SimpleLearning.debugCircuit()">
+                        <span>🐛</span>
+                        <span>Debug</span>
+                    </button>
+                    <button class="feature-btn" onclick="SimpleLearning.clearChat()">
+                        <span>🗑️</span>
+                        <span>Clear</span>
+                    </button>
+                </div>
+                
                 <div class="chat-messages" id="chatMessages">
                     <div class="chat-message ai">
-                        👋 Hello! I'm your AI Tutor. Ask me anything about electronics, circuits, or any concept you're learning!
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">
+                            <div class="message-header">
+                                <strong>AI Tutor</strong>
+                                <span class="message-time">just now</span>
+                            </div>
+                            <div class="message-text">
+                                👋 Hello! I'm your AI Electronics Tutor powered by advanced AI.
+                                
+                                <div class="suggestions">
+                                    <p><strong>I can help you with:</strong></p>
+                                    <button class="suggestion-btn" onclick="SimpleLearning.askQuestion('Explain Ohm\\'s Law with examples')">⚡ Explain Ohm's Law</button>
+                                    <button class="suggestion-btn" onclick="SimpleLearning.askQuestion('How does an LED work?')">💡 How LEDs work</button>
+                                    <button class="suggestion-btn" onclick="SimpleLearning.askQuestion('Calculate resistor for LED circuit')">🧮 Calculate resistor values</button>
+                                    <button class="suggestion-btn" onclick="SimpleLearning.askQuestion('Debug my circuit not working')">🐛 Debug circuits</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                
+                <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                    <div class="message-avatar">🤖</div>
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                
                 <div class="chat-input-area">
-                    <input type="text" id="chatInput" placeholder="Type your question here..." onkeypress="if(event.key==='Enter') SimpleLearning.sendMessage()">
-                    <button onclick="SimpleLearning.sendMessage()">Send</button>
+                    <button class="attach-btn" onclick="SimpleLearning.attachImage()" title="Attach Image">
+                        <span>📎</span>
+                    </button>
+                    <textarea id="chatInput" 
+                              placeholder="Ask me anything about electronics..." 
+                              rows="1"
+                              onkeypress="if(event.key==='Enter' && !event.shiftKey) { event.preventDefault(); SimpleLearning.sendMessage(); }"
+                              oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'"></textarea>
+                    <button class="voice-btn" onclick="SimpleLearning.voiceInput()" title="Voice Input">
+                        <span>🎤</span>
+                    </button>
+                    <button class="send-btn" onclick="SimpleLearning.sendMessage()">
+                        <span>📤</span>
+                    </button>
                 </div>
             </div>
             `
@@ -237,42 +299,349 @@ const SimpleLearning = {
         // Add user message
         this.addChatMessage(message, 'user');
         input.value = '';
+        input.style.height = 'auto';
         
-        // Simulate AI response
+        // Show typing indicator
+        this.showTyping(true);
+        
+        // Simulate AI response with delay
         setTimeout(() => {
+            this.showTyping(false);
             const response = this.generateAIResponse(message);
             this.addChatMessage(response, 'ai');
-        }, 1000);
+        }, 1500);
     },
     
     addChatMessage(text, type) {
         const messagesContainer = document.getElementById('chatMessages');
+        const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        
         const messageDiv = document.createElement('div');
         messageDiv.className = `chat-message ${type}`;
-        messageDiv.textContent = text;
+        
+        if (type === 'ai') {
+            messageDiv.innerHTML = `
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    <div class="message-header">
+                        <strong>AI Tutor</strong>
+                        <span class="message-time">${time}</span>
+                    </div>
+                    <div class="message-text">${this.formatMessage(text)}</div>
+                    <div class="message-actions">
+                        <button class="action-btn" onclick="SimpleLearning.copyMessage(this)" title="Copy">📋</button>
+                        <button class="action-btn" onclick="SimpleLearning.readAloud(this)" title="Read Aloud">🔊</button>
+                        <button class="action-btn" onclick="SimpleLearning.likeMessage(this)" title="Helpful">👍</button>
+                    </div>
+                </div>
+            `;
+        } else {
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <div class="message-header">
+                        <strong>You</strong>
+                        <span class="message-time">${time}</span>
+                    </div>
+                    <div class="message-text">${text}</div>
+                </div>
+                <div class="message-avatar user">👤</div>
+            `;
+        }
+        
         messagesContainer.appendChild(messageDiv);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     },
     
+    formatMessage(text) {
+        // Convert markdown-like formatting
+        text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        text = text.replace(/`(.*?)`/g, '<code>$1</code>');
+        text = text.replace(/\n/g, '<br>');
+        return text;
+    },
+    
+    showTyping(show) {
+        const indicator = document.getElementById('typingIndicator');
+        if (indicator) {
+            indicator.style.display = show ? 'flex' : 'none';
+            if (show) {
+                const container = document.getElementById('chatMessages');
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+    },
+    
     generateAIResponse(question) {
+        const lowerQ = question.toLowerCase();
+        
+        // Comprehensive responses
         const responses = {
-            'led': '💡 An LED (Light Emitting Diode) is a semiconductor that emits light when current flows through it. Always connect it with a current-limiting resistor!',
-            'resistor': '⚡ A resistor limits the flow of electric current. Use Ohm\'s Law: V = IR to calculate resistance values.',
-            'voltage': '⚡ Voltage is the electrical potential difference between two points. It\'s measured in Volts (V).',
-            'current': '⚡ Current is the flow of electric charge, measured in Amperes (A). It flows from positive to negative.',
-            'circuit': '🔌 A circuit is a closed loop that allows electric current to flow. It needs a power source, conductors, and a load.',
-            'ohm': '📐 Ohm\'s Law: V = IR. Voltage equals Current times Resistance. This is fundamental to circuit analysis!',
-            'battery': '🔋 A battery is a power source that converts chemical energy to electrical energy, providing DC voltage.'
+            'ohm': `⚡ **Ohm's Law Explained**
+            
+            Ohm's Law is the fundamental relationship in electronics:
+            
+            **V = I × R**
+            
+            Where:
+            • V = Voltage (Volts)
+            • I = Current (Amperes)
+            • R = Resistance (Ohms)
+            
+            **Example:**
+            If you have a 9V battery and want 20mA through an LED:
+            R = V / I = 9V / 0.02A = **450Ω resistor**
+            
+            Use a standard 470Ω resistor (closest value).`,
+            
+            'led': `💡 **How LEDs Work**
+            
+            An LED (Light Emitting Diode) is a semiconductor that emits light when current flows through it.
+            
+            **Key Points:**
+            • Forward voltage: ~2V for red, ~3V for blue/white
+            • Current: Typically 20mA (0.02A)
+            • **Always use a resistor!** Without it, LED will burn out
+            
+            **LED Circuit Formula:**
+            R = (Vsupply - Vled) / I
+            
+            **Example:** 9V battery, red LED (2V), 20mA
+            R = (9 - 2) / 0.02 = **350Ω** (use 390Ω)`,
+            
+            'resistor': `⚡ **Resistor Guide**
+            
+            Resistors limit current flow in circuits.
+            
+            **Color Code (4-band):**
+            • Band 1-2: Value digits
+            • Band 3: Multiplier
+            • Band 4: Tolerance (gold=5%, silver=10%)
+            
+            **Common Values:**
+            220Ω, 470Ω, 1kΩ, 10kΩ, 100kΩ
+            
+            **Power Rating:**
+            P = I² × R or P = V² / R
+            Use 1/4W for small circuits, 1/2W for higher current`,
+            
+            'capacitor': `🎛️ **Capacitors Explained**
+            
+            Capacitors store electrical energy temporarily.
+            
+            **Formula:** Q = C × V
+            (Charge = Capacitance × Voltage)
+            
+            **Types:**
+            • Ceramic: 10pF-10µF, non-polarized
+            • Electrolytic: 1µF-10000µF, **polarized!**
+            
+            **Uses:**
+            • Filtering/smoothing power
+            • Timing circuits
+            • Coupling/decoupling signals`,
+            
+            'voltage divider': `📊 **Voltage Divider**
+            
+            Split voltage using two resistors:
+            
+            **Formula:**
+            Vout = Vin × (R2 / (R1 + R2))
+            
+            **Example:** 9V to 5V
+            Use R1=4kΩ, R2=5kΩ
+            Vout = 9 × (5/(4+5)) = **5V**
+            
+            **Note:** Works best with no load or high impedance load`,
+            
+            'debug': `🐛 **Circuit Debugging Tips**
+            
+            **Common Issues:**
+            
+            1. **LED not lighting:**
+               • Check polarity (long leg = +)
+               • Verify resistor value
+               • Test battery voltage
+            
+            2. **No current flow:**
+               • Check connections
+               • Verify continuity
+               • Look for broken wires
+            
+            3. **Component too hot:**
+               • Reduce current
+               • Add/increase resistor
+               • Check power rating
+            
+            **Tools:** Use multimeter to measure V, I, R`,
+            
+            'calculate': `🧮 **Circuit Calculations**
+            
+            What would you like to calculate?
+            
+            • **LED resistor:** "calculate resistor for 9V LED"
+            • **Current:** "calculate current in circuit"
+            • **Power:** "calculate power dissipation"
+            • **Voltage divider:** "calculate voltage divider"
+            
+            Just ask with your specific values!`,
         };
         
-        const lowerQ = question.toLowerCase();
+        // Check for matches
         for (const [key, response] of Object.entries(responses)) {
             if (lowerQ.includes(key)) {
                 return response;
             }
         }
         
-        return `I understand you're asking about "${question}". For electronics concepts, try asking about LEDs, resistors, voltage, current, circuits, Ohm's Law, or batteries. I'm here to help! 📚`;
+        // Calculate resistor for LED
+        if (lowerQ.includes('calculate') && lowerQ.includes('resistor')) {
+            return `🧮 **LED Resistor Calculator**
+            
+            To calculate the resistor:
+            
+            **Formula:** R = (Vsupply - Vled) / I
+            
+            **Standard values:**
+            • Supply: 5V → Use 150Ω (for red LED)
+            • Supply: 9V → Use 470Ω (for red LED)
+            • Supply: 12V → Use 560Ω (for red LED)
+            
+            Tell me your supply voltage and LED color!`;
+        }
+        
+        // Default helpful response
+        return `🤖 **I'm here to help!**
+        
+        I can explain:
+        • **Ohm's Law** - V = IR relationship
+        • **LEDs** - How they work, resistor calculation
+        • **Resistors** - Color codes, values, power
+        • **Capacitors** - Types, usage, formulas
+        • **Circuits** - Design, debugging, analysis
+        
+        Try asking: *"Explain Ohm's Law with examples"* or *"Calculate resistor for LED"*`;
+    },
+    
+    askQuestion(question) {
+        document.getElementById('chatInput').value = question;
+        this.sendMessage();
+    },
+    
+    showExamples() {
+        this.addChatMessage(`💡 **Example Questions:**
+        
+        • "Explain Ohm's Law step by step"
+        • "How to calculate LED resistor for 9V?"
+        • "What's the difference between series and parallel?"
+        • "How does a voltage divider work?"
+        • "Debug: My LED is not lighting up"
+        • "Calculate power dissipation in resistor"`, 'ai');
+    },
+    
+    explainConcept() {
+        this.addChatMessage(`📚 **What concept would you like me to explain?**
+        
+        Popular topics:
+        • Ohm's Law
+        • LED circuits
+        • Voltage dividers
+        • Capacitors
+        • Transistors
+        • Logic gates
+        
+        Just ask: "Explain [concept name]"`, 'ai');
+    },
+    
+    solveCircuit() {
+        this.addChatMessage(`🧮 **Circuit Solver**
+        
+        I can help calculate:
+        • Resistor values for LEDs
+        • Current in series/parallel
+        • Voltage drops
+        • Power dissipation
+        • Capacitor charging time
+        
+        Describe your circuit and values!`, 'ai');
+    },
+    
+    debugCircuit() {
+        this.addChatMessage(`🐛 **Circuit Debugging Assistant**
+        
+        Tell me the problem:
+        • "LED not working"
+        • "Circuit getting hot"
+        • "No voltage output"
+        • "Incorrect readings"
+        
+        I'll help you find the issue!`, 'ai');
+    },
+    
+    clearChat() {
+        const container = document.getElementById('chatMessages');
+        container.innerHTML = `
+            <div class="chat-message ai">
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    <div class="message-header">
+                        <strong>AI Tutor</strong>
+                        <span class="message-time">just now</span>
+                    </div>
+                    <div class="message-text">Chat cleared! How can I help you today?</div>
+                </div>
+            </div>
+        `;
+    },
+    
+    copyMessage(btn) {
+        const text = btn.closest('.message-content').querySelector('.message-text').innerText;
+        navigator.clipboard.writeText(text);
+        btn.innerHTML = '✅';
+        setTimeout(() => btn.innerHTML = '📋', 2000);
+    },
+    
+    readAloud(btn) {
+        const text = btn.closest('.message-content').querySelector('.message-text').innerText;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.9;
+        utterance.pitch = 1;
+        speechSynthesis.speak(utterance);
+        btn.innerHTML = '🔊';
+    },
+    
+    likeMessage(btn) {
+        btn.innerHTML = btn.innerHTML === '👍' ? '💚' : '👍';
+    },
+    
+    voiceInput() {
+        if (!('webkitSpeechRecognition' in window)) {
+            alert('⚠️ Voice input not supported in this browser. Try Chrome!');
+            return;
+        }
+        
+        const recognition = new webkitSpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.continuous = false;
+        
+        recognition.onstart = () => {
+            console.log('🎤 Listening...');
+        };
+        
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            document.getElementById('chatInput').value = transcript;
+        };
+        
+        recognition.onerror = (event) => {
+            console.error('Voice error:', event.error);
+        };
+        
+        recognition.start();
+    },
+    
+    attachImage() {
+        alert('📎 Image attachment feature coming soon! You can describe your circuit problem for now.');
     },
     
     // Simulation Functions
