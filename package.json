@@ -1,7 +1,7 @@
 {
-  "name": "ece-master-professional",
-  "version": "5.0.0",
-  "description": "ECE MASTER v5.0 - Professional interactive electronics learning platform with real-time analytics, smart hints, and hands-on practice modes",
+  "name": "ece-master-ultimate",
+  "version": "6.0.0",
+  "description": "ECE MASTER v6.0 - Ultimate learning platform with AI Tutor + Webcam, Live Circuit Simulation, Certificate System, and comprehensive hands-on learning features!",
   "main": "index.html",
   "scripts": {
     "start": "http-server -c-1 . -p 8002",
