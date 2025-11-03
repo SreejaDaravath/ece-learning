@@ -1,12 +1,44 @@
-﻿# 🎓 ECE MASTER - Learn Electronics by Doing!
+﻿# 🎓 ECE MASTER v6.0 - Ultimate Learning Suite
 
 [![GitHub Pages](https://img.shields.io/badge/demo-live-brightgreen)](https://sreejadaravath.github.io/ece-learning/)
+[![Version](https://img.shields.io/badge/version-6.0.0-blue)](WHATS_NEW_v6.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-**Interactive electronics learning game with 50 levels.** Build circuits, connect wires, master voltage dividers, logic gates, and digital circuits. Learn ECE hands-on!
+**The Ultimate Interactive Electronics Learning Platform!** Master electronics with AI Tutor + Webcam, Live Simulation, Professional Certificates, and 50 hands-on levels. Build circuits, learn by doing, earn achievements!
 
-🚀 [**Play Now**](https://sreejadaravath.github.io/ece-learning/) • 📖 [User Guide](USER_GUIDE.md) • 🐛 [Report Issue](https://github.com/SreejaDaravath/ece-learning/issues)
+🚀 [**Play Now**](https://sreejadaravath.github.io/ece-learning/) • 🆕 [What's New in v6.0](WHATS_NEW_v6.md) • 📖 [User Guide](USER_GUIDE.md) • 🐛 [Report Issue](https://github.com/SreejaDaravath/ece-learning/issues)
+
+---
+
+## 🌟 NEW in v6.0 - Ultimate Learning Suite
+
+### 🤖 AI Tutor with Webcam Integration
+- **Smart Conversational Interface** - Ask questions in natural language
+- **Webcam Support** - Show your circuit setup for visual help
+- **Context-Aware Responses** - Educational explanations with real-world analogies
+- **Quick Help Actions** - One-click access to common electronics topics
+- **24/7 Available** - Your personal electronics tutor anytime, anywhere
+
+### ⚡ Live Circuit Simulation
+- **Real-Time Metrics** - Watch current, voltage, and power update live
+- **Interactive Controls** - Start, pause, reset simulation with one click
+- **Speed Adjustment** - Control simulation speed (0.5x, 1x, 2x)
+- **Visual Feedback** - See how circuit changes affect measurements instantly
+
+### 🏆 Professional Certificate System
+- **4 Achievement Levels** - Basic → Intermediate → Advanced → Expert
+- **Professional Design** - Canvas-generated certificates with gradients and signatures
+- **Downloadable** - Save as PNG and share on LinkedIn, portfolios
+- **Progress Tracking** - See your journey from beginner to circuit master
+
+### 📹 Enhanced Webcam Features
+- **Show Physical Circuits** - Get AI feedback on real-world builds
+- **Video Preview** - See yourself while learning for better engagement
+- **Privacy-First** - Camera only activates when you enable it
+- **One-Click Toggle** - Easy on/off control
+
+> 📘 **[Read the full v6.0 feature guide →](WHATS_NEW_v6.md)**
 
 ---
 
@@ -20,12 +52,11 @@
 - 👁️ **Show Answer** - See the solution when stuck
 - 💡 **Smart Hints** - Context-aware hints (costs 25 points)
 
-### 📹 NEW! ECE AI Assistant
-- **Webcam Integration** - Show your physical circuit for instant feedback
-- **Real-time Analysis** - AI-powered circuit checking and validation
-- **Smart Tips System** - Get hints on components, connections, values, and theory
-- **Interactive Learning** - Capture your circuit for personalized guidance
-- **Keyboard Shortcuts** - Quick access to all assistant features
+### 📹 Interactive Learning Tools
+- **AI Tutor Chat** - Ask questions and get instant educational responses
+- **Webcam Integration** - Show your physical circuit for visual feedback
+- **Quick Help System** - Ohm's Law, Kirchhoff's Laws, voltage division explained
+- **Smart Response Engine** - Context-aware answers based on your level
 
 ### 🔧 Tools & Measurements
 - 📊 **Virtual Multimeter** - Measure voltage, current, and resistance
