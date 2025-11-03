@@ -19,17 +19,6 @@ const SystematicLearning = {
         const dashboard = document.createElement('div');
         dashboard.className = 'systematic-dashboard';
         dashboard.innerHTML = `
-            <!-- Learning Path Header -->
-            <div class="learning-header">
-                <h2>📚 Your Learning Journey</h2>
-                <div class="journey-progress">
-                    <span>Step <span id="currentStepNum">1</span> of 5</span>
-                    <div class="journey-bar">
-                        <div class="journey-fill" id="journeyFill"></div>
-                    </div>
-                </div>
-            </div>
-            
             <!-- Step-by-Step Learning Path -->
             <div class="learning-steps">
                 <!-- Step 1: Watch & Learn -->
