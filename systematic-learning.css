@@ -1,45 +1,45 @@
 /* 🎓 Systematic Learning Dashboard - Clean & Organized Styles */
 
-/* Dashboard Container - Always Open, Left Side */
+/* Dashboard Container - TOP Horizontal Layout */
 .systematic-dashboard {
     position: fixed;
-    top: 80px;
+    top: 70px;
     left: 20px;
-    width: 380px;
-    max-height: calc(100vh - 100px);
+    right: 20px;
+    width: calc(100% - 40px);
+    max-height: 120px;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(240, 248, 255, 0.98));
     backdrop-filter: blur(25px);
-    border-radius: 20px;
+    border-radius: 15px;
     border: 2px solid rgba(79, 70, 229, 0.3);
-    box-shadow: 0 20px 60px rgba(79, 70, 229, 0.2);
+    box-shadow: 0 10px 40px rgba(79, 70, 229, 0.2);
     z-index: 9999;
-    overflow-y: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .systematic-dashboard.minimized {
-    transform: translateX(-420px);
+    transform: translateY(-200px);
     opacity: 0;
     pointer-events: none;
 }
 
-/* Floating Toggle Button - Left Side */
+/* Floating Toggle Button - Top Center */
 .dashboard-toggle-btn {
     position: fixed;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
     background: linear-gradient(135deg, #4f46e5, #7c3aed);
     color: white;
     border: none;
-    border-radius: 0 12px 12px 0;
-    padding: 20px 15px;
-    font-size: 16px;
+    border-radius: 0 0 12px 12px;
+    padding: 12px 30px;
+    font-size: 14px;
     font-weight: 600;
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
     cursor: pointer;
-    box-shadow: 5px 5px 20px rgba(79, 70, 229, 0.3);
+    box-shadow: 0 5px 20px rgba(79, 70, 229, 0.3);
     z-index: 10000;
     transition: all 0.3s ease;
     opacity: 0;
@@ -53,8 +53,8 @@
 
 .dashboard-toggle-btn:hover {
     background: linear-gradient(135deg, #6366f1, #8b5cf6);
-    box-shadow: 8px 8px 30px rgba(79, 70, 229, 0.4);
-    transform: translateY(-50%) translateX(5px);
+    box-shadow: 0 8px 30px rgba(79, 70, 229, 0.4);
+    transform: translateX(-50%) translateY(3px);
 }
 
 /* Learning Header */
@@ -100,21 +100,27 @@
     box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
 }
 
-/* Learning Steps Container - Vertical List */
+/* Learning Steps Container - HORIZONTAL Row */
 .learning-steps {
-    padding: 15px;
+    padding: 15px 20px;
     display: flex;
-    flex-direction: column;
-    gap: 12px;
+    flex-direction: row;
+    gap: 15px;
+    overflow-x: auto;
+    align-items: stretch;
 }
 
-/* Individual Learning Step - Always Expanded */
+/* Individual Learning Step - Compact Horizontal Cards */
 .learning-step {
     background: white;
-    border-radius: 15px;
+    border-radius: 12px;
     border: 2px solid rgba(79, 70, 229, 0.15);
     overflow: visible;
     transition: all 0.3s ease;
+    min-width: 180px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .learning-step.active {
@@ -131,15 +137,17 @@
     opacity: 0.7;
 }
 
-/* Step Header - Compact */
+/* Step Header - Compact Horizontal */
 .step-header {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
-    padding: 15px;
+    gap: 8px;
+    padding: 12px;
     cursor: default;
     transition: background 0.3s ease;
     background: rgba(79, 70, 229, 0.03);
+    text-align: center;
 }
 
 .step-header:hover {
@@ -147,18 +155,19 @@
 }
 
 .step-number {
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     background: linear-gradient(135deg, #4f46e5, #7c3aed);
     color: white;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     flex-shrink: 0;
     box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    margin: 0 auto;
 }
 
 .learning-step.completed .step-number {
@@ -170,16 +179,15 @@
 }
 
 .step-info h3 {
-    margin: 0 0 3px 0;
-    font-size: 16px;
+    margin: 0;
+    font-size: 13px;
     font-weight: 600;
     color: #1f2937;
+    white-space: nowrap;
 }
 
 .step-info p {
-    margin: 0;
-    font-size: 12px;
-    color: #6b7280;
+    display: none;
 }
 
 .step-status {
@@ -209,20 +217,9 @@
     color: white;
 }
 
-/* Step Content - Always Visible */
+/* Step Content - Hide in horizontal layout */
 .step-content {
-    padding: 0 15px 15px 15px;
-    max-height: none;
-    overflow: visible;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 1;
-}
-
-.step-content.collapsed {
-    /* Keep visible - no collapsing */
-    max-height: none;
-    padding: 0 15px 15px 15px;
-    opacity: 1;
+    display: none !important;
 }
 
 /* Step Actions */
@@ -483,46 +480,9 @@
     color: #4f46e5;
 }
 
-/* Dashboard Controls */
+/* Dashboard Controls - Hide in top layout */
 .dashboard-controls {
-    display: flex;
-    gap: 10px;
-    padding: 20px;
-    background: #f9fafb;
-    border-top: 2px solid #e5e7eb;
-}
-
-.control-btn {
-    flex: 1;
-    padding: 12px 16px;
-    border: 2px solid #e5e7eb;
-    border-radius: 10px;
-    background: white;
-    font-size: 14px;
-    font-weight: 600;
-    color: #374151;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.control-btn:hover {
-    background: #f3f4f6;
-    border-color: #d1d5db;
-}
-
-.control-btn.primary {
-    background: linear-gradient(135deg, #4f46e5, #7c3aed);
-    color: white;
-    border: none;
-}
-
-.control-btn.primary:hover {
-    background: linear-gradient(135deg, #6366f1, #8b5cf6);
-}
-
-.control-btn.secondary {
-    background: white;
-    color: #6b7280;
+    display: none !important;
 }
 
 /* Notifications */

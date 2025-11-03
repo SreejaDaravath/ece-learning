@@ -38,22 +38,26 @@ body {
     background: #f9fafb;
 }
 
-/* Adjust canvas area for better space with left dashboard */
+/* Adjust canvas area - space for top steps and left sidebar */
 #main,
 .main-content,
 .game-container,
 main {
-    margin-left: 420px !important;
+    margin-left: 320px !important;
     margin-right: 20px !important;
+    margin-top: 180px !important;
     padding: 20px;
-    transition: margin-left 0.3s ease;
-    max-width: calc(100% - 440px);
+    transition: all 0.3s ease;
+    max-width: calc(100% - 360px);
 }
 
-.systematic-dashboard.minimized ~ #main,
-.systematic-dashboard.minimized ~ .main-content {
-    margin-left: 20px !important;
-    max-width: calc(100% - 40px);
+/* When sidebar is present */
+#main.with-sidebar,
+.main-content.with-sidebar,
+.game-container.with-sidebar,
+main.with-sidebar {
+    margin-left: 320px !important;
+    max-width: calc(100% - 360px);
 }
 
 /* Clean Header - Remove Clutter */
@@ -501,10 +505,15 @@ aside,
         border-radius: 20px 20px 0 0;
     }
     
-    #main {
+    #main,
+    #main.with-sidebar,
+    .main-content,
+    .main-content.with-sidebar {
         margin-left: 10px !important;
         margin-right: 10px !important;
+        margin-top: 180px !important;
         padding: 10px;
+        max-width: calc(100% - 20px) !important;
     }
     
     .measurements-grid {
