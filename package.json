@@ -1,7 +1,7 @@
 {
-  "name": "ece-master-final",
-  "version": "4.0.0",
-  "description": "ECE MASTER - Interactive electronics learning game with AI Assistant (static web app)",
+  "name": "ece-master-professional",
+  "version": "5.0.0",
+  "description": "ECE MASTER v5.0 - Professional interactive electronics learning platform with real-time analytics, smart hints, and hands-on practice modes",
   "main": "index.html",
   "scripts": {
     "start": "http-server -c-1 . -p 8002",
