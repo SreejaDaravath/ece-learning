@@ -1322,3 +1322,119 @@ body {
     text-decoration: none;
     border-radius: 4px;
 }
+
+/* ================================
+   🍪 PRIVACY BANNER STYLES
+   ================================ */
+
+.privacy-banner {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%);
+    border: 2px solid var(--primary);
+    border-radius: 16px;
+    padding: 20px 30px;
+    max-width: 600px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateX(-50%) translateY(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+.privacy-banner.hidden {
+    display: none;
+}
+
+.privacy-content p {
+    color: var(--text-primary);
+    font-size: 0.95em;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.privacy-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.privacy-btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.privacy-btn.accept {
+    background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+    color: white;
+}
+
+.privacy-btn.accept:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+.privacy-btn.decline {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+}
+
+.privacy-btn.decline:hover {
+    background: var(--bg-darker);
+    border-color: var(--danger);
+}
+
+.privacy-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 0.85em;
+    font-weight: 600;
+    padding: 8px 12px;
+}
+
+.privacy-link:hover {
+    text-decoration: underline;
+}
+
+/* Mobile responsive privacy banner */
+@media (max-width: 600px) {
+    .privacy-banner {
+        bottom: 10px;
+        width: 95%;
+        padding: 15px 20px;
+    }
+    
+    .privacy-content p {
+        font-size: 0.85em;
+    }
+    
+    .privacy-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .privacy-btn {
+        width: 100%;
+    }
+}

@@ -1,12 +1,35 @@
 {
   "name": "ece-master-final",
-  "version": "3.0.0",
-  "description": "ECE MASTER - Interactive electronics learning game (static web app)",
+  "version": "4.0.0",
+  "description": "ECE MASTER - Interactive electronics learning game with AI Assistant (static web app)",
   "main": "index.html",
   "scripts": {
     "start": "http-server -c-1 . -p 8002",
-    "serve": "npm run start"
+    "serve": "npm run start",
+    "test": "node tests/basic.test.js",
+    "test:verbose": "node tests/basic.test.js --verbose",
+    "validate": "npm test",
+    "deploy": "echo '🚀 Deploying to GitHub Pages...' && git push origin main"
   },
+  "keywords": [
+    "electronics",
+    "ECE",
+    "learning",
+    "education",
+    "circuits",
+    "STEM",
+    "interactive",
+    "game",
+    "voltage-divider",
+    "logic-gates",
+    "ai-assistant"
+  ],
+  "author": "ECE Master Team",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SreejaDaravath/ece-learning.git"
+  },
+  "homepage": "https://sreejadaravath.github.io/ece-learning/",
   "devDependencies": {
     "http-server": "^14.1.1"
   },

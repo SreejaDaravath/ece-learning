@@ -25,10 +25,66 @@
     
     <link rel="stylesheet" href="style.css?v=20251103v4">
     <link rel="manifest" href="manifest.json">
+    
+    <!-- Google Analytics (Privacy-focused) - Replace G-XXXXXXXXXX with your tracking ID -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        // Initialize Google Analytics only if user consents
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        
+        // Check for consent in localStorage
+        const analyticsConsent = localStorage.getItem('analytics-consent');
+        if (analyticsConsent === 'true') {
+            gtag('js', new Date());
+            gtag('config', 'G-XXXXXXXXXX', {
+                'anonymize_ip': true,
+                'cookie_flags': 'SameSite=None;Secure'
+            });
+        }
+        
+        // Custom event tracking
+        window.trackEvent = function(category, action, label, value) {
+            if (analyticsConsent === 'true' && typeof gtag !== 'undefined') {
+                gtag('event', action, {
+                    'event_category': category,
+                    'event_label': label,
+                    'value': value
+                });
+            }
+        };
+        
+        // Error tracking
+        window.addEventListener('error', function(e) {
+            console.error('Application error:', e.error);
+            if (typeof trackEvent !== 'undefined') {
+                trackEvent('Error', 'JavaScript Error', e.message, 0);
+            }
+        });
+        
+        window.addEventListener('unhandledrejection', function(e) {
+            console.error('Unhandled promise rejection:', e.reason);
+            if (typeof trackEvent !== 'undefined') {
+                trackEvent('Error', 'Promise Rejection', e.reason, 0);
+            }
+        });
+    </script>
 </head>
 <body>
     <!-- Skip link for keyboard users -->
     <a class="skip-link" href="#main" style="position:absolute;left:-999px;top:auto;" onfocus="this.style.left='10px'" onblur="this.style.left='-999px'">Skip to content</a>
+    
+    <!-- Privacy Notice / Cookie Consent Banner -->
+    <div class="privacy-banner hidden" id="privacyBanner">
+        <div class="privacy-content">
+            <p>🍪 We use analytics to improve your learning experience. Your data is anonymized and secure.</p>
+            <div class="privacy-actions">
+                <button class="privacy-btn accept" id="acceptAnalytics">Accept & Continue</button>
+                <button class="privacy-btn decline" id="declineAnalytics">Decline</button>
+                <a href="#" class="privacy-link" id="learnMorePrivacy">Learn More</a>
+            </div>
+        </div>
+    </div>
     <!-- 🎮 Game Header -->
     <header class="game-header" role="banner">
         <div class="header-left">
@@ -561,7 +617,102 @@
         // Initialize when DOM is ready
         document.addEventListener('DOMContentLoaded', () => {
             ECEAssistant.init();
+            PrivacyManager.init();
         });
+    </script>
+    
+    <!-- Privacy & Analytics Manager -->
+    <script>
+        const PrivacyManager = {
+            init() {
+                const consent = localStorage.getItem('analytics-consent');
+                
+                // Show banner if user hasn't made a choice
+                if (consent === null) {
+                    setTimeout(() => {
+                        document.getElementById('privacyBanner').classList.remove('hidden');
+                    }, 2000); // Show after 2 seconds
+                }
+                
+                // Button handlers
+                document.getElementById('acceptAnalytics').addEventListener('click', () => {
+                    this.setConsent(true);
+                    this.trackEvent('Privacy', 'Analytics Consent', 'Accepted', 1);
+                });
+                
+                document.getElementById('declineAnalytics').addEventListener('click', () => {
+                    this.setConsent(false);
+                });
+                
+                document.getElementById('learnMorePrivacy').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showPrivacyInfo();
+                });
+            },
+            
+            setConsent(accepted) {
+                localStorage.setItem('analytics-consent', accepted.toString());
+                document.getElementById('privacyBanner').classList.add('hidden');
+                
+                if (accepted) {
+                    // Reload analytics
+                    location.reload();
+                }
+            },
+            
+            showPrivacyInfo() {
+                const info = `
+                    <div style="padding: 20px; background: var(--bg-card); border-radius: 12px;">
+                        <h3 style="color: var(--primary); margin-bottom: 15px;">🔒 Privacy Policy</h3>
+                        <p style="line-height: 1.6; margin-bottom: 15px;">
+                            <strong>We respect your privacy!</strong> Here's what we collect:
+                        </p>
+                        <ul style="line-height: 1.8; margin-left: 20px;">
+                            <li>✅ Anonymous usage statistics (levels completed, time spent)</li>
+                            <li>✅ Technical data (browser, device type, screen size)</li>
+                            <li>✅ Error reports to improve stability</li>
+                            <li>❌ NO personal information (name, email, etc.)</li>
+                            <li>❌ NO tracking across websites</li>
+                            <li>❌ NO selling your data</li>
+                        </ul>
+                        <p style="line-height: 1.6; margin-top: 15px; color: var(--text-secondary);">
+                            <strong>Your IP is anonymized.</strong> All data is secure and used only to improve the learning experience.
+                            You can change your choice anytime by clearing browser data.
+                        </p>
+                    </div>
+                `;
+                
+                const messageDiv = document.getElementById('assistantMessage');
+                if (messageDiv) {
+                    messageDiv.innerHTML = info;
+                    messageDiv.className = 'assistant-message info';
+                    document.getElementById('eceAssistantModal').classList.remove('hidden');
+                } else {
+                    alert(info.replace(/<[^>]*>/g, ''));
+                }
+            },
+            
+            trackEvent(category, action, label, value) {
+                if (window.trackEvent) {
+                    window.trackEvent(category, action, label, value);
+                }
+            }
+        };
+        
+        // Track level completions
+        window.trackLevelComplete = function(levelNum, score, time) {
+            if (window.trackEvent) {
+                trackEvent('Gameplay', 'Level Complete', `Level ${levelNum}`, score);
+                trackEvent('Gameplay', 'Completion Time', `Level ${levelNum}`, time);
+            }
+        };
+        
+        // Track feature usage
+        window.trackFeatureUse = function(featureName) {
+            if (window.trackEvent) {
+                trackEvent('Features', 'Feature Used', featureName, 1);
+            }
+        };
     </script>
     
     <script>
