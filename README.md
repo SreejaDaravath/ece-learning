@@ -12,14 +12,39 @@
 
 ## ✨ Features
 
+### 🎓 Learning & Gameplay
 - 🎮 **50 Interactive Levels** - From basic LED circuits to complex logic gates
 - 🔌 **Drag & Drop Components** - Batteries, LEDs, resistors, logic gates, and more
 - ✏️ **Draw Smooth Wires** - Hand-drawn wire tool for natural circuit building
-- 📊 **Real-Time Measurements** - Voltage, current, resistance, and power
-- 🏆 **Achievements & Scoring** - Track progress and compete with yourself
+- � **Demo Videos** - Watch demonstrations before each level
+- 👁️ **Show Answer** - See the solution when stuck
+- 💡 **Smart Hints** - Context-aware hints (costs 25 points)
+
+### 📹 NEW! ECE AI Assistant
+- **Webcam Integration** - Show your physical circuit for instant feedback
+- **Real-time Analysis** - AI-powered circuit checking and validation
+- **Smart Tips System** - Get hints on components, connections, values, and theory
+- **Interactive Learning** - Capture your circuit for personalized guidance
+- **Keyboard Shortcuts** - Quick access to all assistant features
+
+### 🔧 Tools & Measurements
+- 📊 **Virtual Multimeter** - Measure voltage, current, and resistance
+- 📈 **Logic Analyzer** - Debug digital circuits
+- 〰️ **Oscilloscope** - Visualize waveforms
+- 🧪 **Circuit Simulator** - Test before submitting
+
+### 🎯 Progress & Achievements
+- 🏆 **Achievement System** - Unlock badges for milestones
+- 📈 **Score Tracking** - Base score + time bonus + attempt bonus
+- ⏱️ **Timer Challenges** - Race against time for bonus points
+- 🔥 **Streak Tracking** - Maintain perfect level completion streaks
+
+### 🌐 Accessibility & Compatibility
 - 🌐 **Multilingual** - English and Hindi (हिन्दी) support
 - 📴 **Works Offline** - Install as PWA for offline learning
-- ♿ **Accessible** - Keyboard navigation and screen reader support
+- ♿ **Fully Accessible** - Keyboard navigation and screen reader support
+- 📱 **Mobile Responsive** - Works perfectly on phones and tablets
+- 🎨 **Modern UI** - Beautiful gradients and smooth animations
 
 ---
 
@@ -93,7 +118,57 @@ Notes & next accessibility steps
 
 ---
 
-## 🚀 Publishing to GitHub & Making It Public
+## � How to Use ECE AI Assistant
+
+The **ECE AI Assistant** is your personal electronics tutor! Here's how to use it:
+
+### 🎯 Getting Started
+
+1. **Click the 📹 ECE Assistant button** in the left panel (below the Hint button)
+2. A modal will open with webcam controls and AI tips
+
+### 📷 Using the Webcam Feature
+
+**Step 1: Enable Camera**
+- Click **📷 Start Camera** button
+- Allow camera permissions when prompted
+- Position your physical circuit in the camera view
+
+**Step 2: Get Feedback**
+- Click **📸 Capture Circuit** to analyze your setup
+- The AI will analyze component placement and connections
+- Get instant feedback with specific suggestions
+
+**Step 3: Stop When Done**
+- Click **⏹️ Stop Camera** to turn off the webcam
+- Camera only runs when you need it (privacy-focused)
+
+### 💡 Quick Tips (No Camera Required)
+
+Click any of these buttons for instant help:
+
+- **Show All Components** - See what components you need for the level
+- **Check Connections** - Learn how to wire components correctly
+- **Verify Values** - Understand component values and ratings
+- **Explain Theory** - Get circuit theory explanations (Ohm's Law, Kirchhoff's Laws)
+
+### 🎓 Smart Features
+
+- **Context-Aware Hints** - Suggestions based on your current level
+- **Progressive Learning** - Tips adapt to your skill level
+- **No Penalties** - Using the assistant doesn't cost points!
+- **Works Offline** - Quick tips work even without internet
+
+### 🔒 Privacy First
+
+- Camera activates ONLY when you click "Start Camera"
+- Images are processed locally (not sent to servers)
+- Stop camera anytime with one click
+- No recording or storage of webcam data
+
+---
+
+## �🚀 Publishing to GitHub & Making It Public
 
 ### If You Already Have a GitHub Repository
 
