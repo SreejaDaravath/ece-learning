@@ -1,7 +1,7 @@
 {
-  "name": "ece-master-ultimate",
-  "version": "6.3.0",
-  "description": "ECE MASTER v6.3 - Reorganized Professional Layout: Steps at Top (Horizontal) + Circuit Components Sidebar (Left) - Drag-and-Drop Components, Systematic Learning Path, AI Tutor, Simulation, Certificates!",
+  "name": "ece-master-simple",
+  "version": "7.0.0",
+  "description": "ECE MASTER v7.0 - Simple Clean Learning Platform: Build Circuits + AI Tutor + Live Simulation + Webcam Demo - Easy, Clean, Professional!",
   "main": "index.html",
   "scripts": {
     "start": "http-server -c-1 . -p 8002",

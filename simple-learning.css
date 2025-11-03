@@ -1,0 +1,411 @@
+/* 🎓 Simple Clean Learning Platform */
+
+/* Reset and hide all complex stuff */
+.systematic-dashboard,
+.dashboard-toggle-btn,
+.learning-header,
+.journey-progress,
+.ai-tutor-floating,
+.certificate-floating-btn,
+.simulation-panel,
+.achievement-badge,
+.progress-section,
+.learning-path-section,
+.status-panel,
+.measurements-panel,
+.achievements-panel,
+.stats-sidebar,
+.progress-sidebar,
+.activity-feed,
+.right-panel,
+.left-panel-analytics {
+    display: none !important;
+}
+
+/* Simple Top Menu Bar */
+.simple-learning-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    box-shadow: 0 4px 20px rgba(79, 70, 229, 0.3);
+    z-index: 10000;
+}
+
+.menu-logo {
+    color: white;
+    font-size: 22px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.menu-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.menu-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.menu-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.menu-btn.active {
+    background: white;
+    color: #4f46e5;
+}
+
+/* Main Content Area - Clean & Simple */
+#main,
+.main-content,
+.game-container,
+main {
+    margin-top: 80px !important;
+    margin-left: 20px !important;
+    margin-right: 20px !important;
+    padding: 20px !important;
+    max-width: 100% !important;
+}
+
+/* Feature Panels - Simple Overlay Style */
+.feature-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 900px;
+    max-height: 85vh;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    z-index: 11000;
+    display: none;
+    overflow: hidden;
+}
+
+.feature-panel.active {
+    display: block;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -45%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.panel-header {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    padding: 20px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.panel-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+.panel-content {
+    padding: 30px;
+    overflow-y: auto;
+    max-height: calc(85vh - 80px);
+}
+
+/* Backdrop */
+.feature-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    z-index: 10500;
+    display: none;
+}
+
+.feature-backdrop.active {
+    display: block;
+}
+
+/* AI Tutor Panel */
+.ai-chat-container {
+    background: #f9fafb;
+    border-radius: 15px;
+    padding: 20px;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 15px;
+    background: white;
+    border-radius: 12px;
+    max-height: 450px;
+}
+
+.chat-message {
+    padding: 12px 18px;
+    border-radius: 12px;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+
+.chat-message.ai {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    align-self: flex-start;
+}
+
+.chat-message.user {
+    background: #e5e7eb;
+    color: #1f2937;
+    align-self: flex-end;
+}
+
+.chat-input-area {
+    display: flex;
+    gap: 10px;
+}
+
+.chat-input-area input {
+    flex: 1;
+    padding: 12px 20px;
+    border: 2px solid #e5e7eb;
+    border-radius: 25px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.chat-input-area input:focus {
+    border-color: #4f46e5;
+}
+
+.chat-input-area button {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.chat-input-area button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3);
+}
+
+/* Simulation Panel */
+.simulation-container {
+    background: #f9fafb;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+}
+
+.simulation-canvas {
+    width: 100%;
+    height: 400px;
+    background: white;
+    border-radius: 12px;
+    border: 2px solid #e5e7eb;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #6b7280;
+}
+
+.simulation-controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.sim-btn {
+    background: white;
+    border: 2px solid #e5e7eb;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.sim-btn:hover {
+    border-color: #4f46e5;
+    color: #4f46e5;
+    transform: translateY(-2px);
+}
+
+.sim-btn.primary {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    border: none;
+}
+
+/* Webcam Panel */
+.webcam-container {
+    background: #1f2937;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+}
+
+.webcam-display {
+    width: 100%;
+    height: 400px;
+    background: #000;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    overflow: hidden;
+}
+
+.webcam-display video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.webcam-controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.webcam-btn {
+    background: white;
+    color: #1f2937;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.webcam-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.webcam-btn.danger {
+    background: #ef4444;
+    color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .simple-learning-menu {
+        padding: 0 15px;
+        height: auto;
+        flex-direction: column;
+        gap: 10px;
+        padding: 15px;
+    }
+    
+    .menu-buttons {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .menu-btn {
+        flex: 1;
+        min-width: 120px;
+        justify-content: center;
+    }
+    
+    .feature-panel {
+        width: 95%;
+        max-height: 90vh;
+    }
+    
+    .panel-content {
+        padding: 20px;
+    }
+    
+    #main,
+    .main-content {
+        margin-top: 140px !important;
+        margin-left: 10px !important;
+        margin-right: 10px !important;
+    }
+}
