@@ -536,19 +536,82 @@ const SimpleLearning = {
         
         if (this.whiteboardActive) {
             const display = document.getElementById('webcamDisplay');
-            const existingElements = display.innerHTML;
+            const videoElement = display.querySelector('video');
             
-            display.innerHTML = existingElements + `
-                <canvas id="whiteboardCanvas" 
-                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: crosshair; z-index: 10;">
-                </canvas>
+            display.innerHTML = `
+                ${videoElement ? videoElement.outerHTML : ''}
+                <div class="whiteboard-overlay">
+                    <canvas id="whiteboardCanvas"></canvas>
+                    <div class="whiteboard-toolbar">
+                        <div class="toolbar-section">
+                            <button class="tool-btn active" onclick="SimpleLearning.setTool('pen')" title="Pen">
+                                <span>✏️</span>
+                            </button>
+                            <button class="tool-btn" onclick="SimpleLearning.setTool('eraser')" title="Eraser">
+                                <span>🧹</span>
+                            </button>
+                            <button class="tool-btn" onclick="SimpleLearning.setTool('line')" title="Line">
+                                <span>📏</span>
+                            </button>
+                            <button class="tool-btn" onclick="SimpleLearning.setTool('rectangle')" title="Rectangle">
+                                <span>⬜</span>
+                            </button>
+                            <button class="tool-btn" onclick="SimpleLearning.setTool('circle')" title="Circle">
+                                <span>⭕</span>
+                            </button>
+                        </div>
+                        
+                        <div class="toolbar-section">
+                            <span style="color: white; font-size: 12px; margin-right: 5px;">ECE:</span>
+                            <button class="symbol-btn" onclick="SimpleLearning.drawSymbol('resistor')" title="Resistor">
+                                <span>⚡</span>
+                            </button>
+                            <button class="symbol-btn" onclick="SimpleLearning.drawSymbol('battery')" title="Battery">
+                                <span>🔋</span>
+                            </button>
+                            <button class="symbol-btn" onclick="SimpleLearning.drawSymbol('led')" title="LED">
+                                <span>💡</span>
+                            </button>
+                            <button class="symbol-btn" onclick="SimpleLearning.drawSymbol('capacitor')" title="Capacitor">
+                                <span>🎛️</span>
+                            </button>
+                            <button class="symbol-btn" onclick="SimpleLearning.drawSymbol('inductor')" title="Inductor">
+                                <span>🔄</span>
+                            </button>
+                            <button class="symbol-btn" onclick="SimpleLearning.drawSymbol('ground')" title="Ground">
+                                <span>⏚</span>
+                            </button>
+                        </div>
+                        
+                        <div class="toolbar-section">
+                            <input type="color" id="colorPicker" value="#4f46e5" 
+                                   onchange="SimpleLearning.changeColor(this.value)" 
+                                   title="Color">
+                            <input type="range" id="lineWidth" min="1" max="10" value="3" 
+                                   onchange="SimpleLearning.changeWidth(this.value)"
+                                   title="Line Width">
+                        </div>
+                        
+                        <div class="toolbar-section">
+                            <button class="tool-btn" onclick="SimpleLearning.clearWhiteboard()" title="Clear All">
+                                <span>🗑️</span>
+                            </button>
+                            <button class="tool-btn" onclick="SimpleLearning.saveWhiteboard()" title="Save">
+                                <span>💾</span>
+                            </button>
+                            <button class="tool-btn danger" onclick="SimpleLearning.openWhiteboard()" title="Close">
+                                <span>❌</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             `;
             
             this.initWhiteboard();
             console.log('✏️ Whiteboard opened');
         } else {
-            const canvas = document.getElementById('whiteboardCanvas');
-            if (canvas) canvas.remove();
+            const overlay = document.querySelector('.whiteboard-overlay');
+            if (overlay) overlay.remove();
             console.log('✏️ Whiteboard closed');
         }
         
@@ -560,28 +623,275 @@ const SimpleLearning = {
         if (!canvas) return;
         
         const ctx = canvas.getContext('2d');
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
         
-        let drawing = false;
-        ctx.strokeStyle = '#4f46e5';
-        ctx.lineWidth = 3;
+        this.whiteboardCtx = ctx;
+        this.currentTool = 'pen';
+        this.currentColor = '#4f46e5';
+        this.lineWidth = 3;
+        this.drawing = false;
+        this.startX = 0;
+        this.startY = 0;
+        
+        ctx.strokeStyle = this.currentColor;
+        ctx.lineWidth = this.lineWidth;
         ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
         
-        canvas.onmousedown = (e) => {
-            drawing = true;
-            ctx.beginPath();
-            ctx.moveTo(e.offsetX, e.offsetY);
+        canvas.onmousedown = (e) => this.startDrawing(e);
+        canvas.onmousemove = (e) => this.draw(e);
+        canvas.onmouseup = () => this.stopDrawing();
+        canvas.onmouseleave = () => this.stopDrawing();
+        
+        // Touch support
+        canvas.ontouchstart = (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
         };
         
-        canvas.onmousemove = (e) => {
-            if (!drawing) return;
-            ctx.lineTo(e.offsetX, e.offsetY);
+        canvas.ontouchmove = (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        };
+        
+        canvas.ontouchend = (e) => {
+            e.preventDefault();
+            const mouseEvent = new MouseEvent('mouseup', {});
+            canvas.dispatchEvent(mouseEvent);
+        };
+    },
+    
+    startDrawing(e) {
+        this.drawing = true;
+        const canvas = document.getElementById('whiteboardCanvas');
+        const rect = canvas.getBoundingClientRect();
+        this.startX = e.clientX - rect.left;
+        this.startY = e.clientY - rect.top;
+        
+        if (this.currentTool === 'pen' || this.currentTool === 'eraser') {
+            this.whiteboardCtx.beginPath();
+            this.whiteboardCtx.moveTo(this.startX, this.startY);
+        }
+        
+        this.savedCanvas = this.whiteboardCtx.getImageData(0, 0, canvas.width, canvas.height);
+    },
+    
+    draw(e) {
+        if (!this.drawing) return;
+        
+        const canvas = document.getElementById('whiteboardCanvas');
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const ctx = this.whiteboardCtx;
+        
+        if (this.currentTool === 'pen') {
+            ctx.strokeStyle = this.currentColor;
+            ctx.lineWidth = this.lineWidth;
+            ctx.lineTo(x, y);
             ctx.stroke();
-        };
+        } else if (this.currentTool === 'eraser') {
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.lineWidth = this.lineWidth * 3;
+            ctx.lineTo(x, y);
+            ctx.stroke();
+        } else {
+            // Clear and redraw for shapes
+            ctx.putImageData(this.savedCanvas, 0, 0);
+            ctx.strokeStyle = this.currentColor;
+            ctx.lineWidth = this.lineWidth;
+            
+            if (this.currentTool === 'line') {
+                ctx.beginPath();
+                ctx.moveTo(this.startX, this.startY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            } else if (this.currentTool === 'rectangle') {
+                ctx.strokeRect(this.startX, this.startY, x - this.startX, y - this.startY);
+            } else if (this.currentTool === 'circle') {
+                const radius = Math.sqrt(Math.pow(x - this.startX, 2) + Math.pow(y - this.startY, 2));
+                ctx.beginPath();
+                ctx.arc(this.startX, this.startY, radius, 0, 2 * Math.PI);
+                ctx.stroke();
+            }
+        }
+    },
+    
+    stopDrawing() {
+        this.drawing = false;
+    },
+    
+    setTool(tool) {
+        this.currentTool = tool;
         
-        canvas.onmouseup = () => drawing = false;
-        canvas.onmouseleave = () => drawing = false;
+        // Update button states
+        document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.closest('.tool-btn').classList.add('active');
+        
+        console.log('🔧 Tool changed to:', tool);
+    },
+    
+    changeColor(color) {
+        this.currentColor = color;
+        if (this.whiteboardCtx) {
+            this.whiteboardCtx.strokeStyle = color;
+        }
+    },
+    
+    changeWidth(width) {
+        this.lineWidth = parseInt(width);
+        if (this.whiteboardCtx) {
+            this.whiteboardCtx.lineWidth = this.lineWidth;
+        }
+    },
+    
+    drawSymbol(symbol) {
+        const ctx = this.whiteboardCtx;
+        if (!ctx) return;
+        
+        const canvas = document.getElementById('whiteboardCanvas');
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        
+        ctx.strokeStyle = this.currentColor;
+        ctx.lineWidth = this.lineWidth;
+        ctx.fillStyle = this.currentColor;
+        ctx.font = '24px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        switch(symbol) {
+            case 'resistor':
+                // Draw resistor zigzag
+                ctx.beginPath();
+                ctx.moveTo(centerX - 40, centerY);
+                ctx.lineTo(centerX - 30, centerY - 10);
+                ctx.lineTo(centerX - 20, centerY + 10);
+                ctx.lineTo(centerX - 10, centerY - 10);
+                ctx.lineTo(centerX, centerY + 10);
+                ctx.lineTo(centerX + 10, centerY - 10);
+                ctx.lineTo(centerX + 20, centerY + 10);
+                ctx.lineTo(centerX + 30, centerY);
+                ctx.lineTo(centerX + 40, centerY);
+                ctx.stroke();
+                ctx.fillText('R', centerX, centerY - 25);
+                break;
+                
+            case 'battery':
+                // Draw battery symbol
+                ctx.beginPath();
+                ctx.moveTo(centerX - 30, centerY);
+                ctx.lineTo(centerX - 10, centerY);
+                ctx.moveTo(centerX - 10, centerY - 15);
+                ctx.lineTo(centerX - 10, centerY + 15);
+                ctx.moveTo(centerX + 10, centerY - 8);
+                ctx.lineTo(centerX + 10, centerY + 8);
+                ctx.moveTo(centerX + 10, centerY);
+                ctx.lineTo(centerX + 30, centerY);
+                ctx.stroke();
+                ctx.fillText('+', centerX - 10, centerY - 25);
+                ctx.fillText('-', centerX + 10, centerY - 25);
+                break;
+                
+            case 'led':
+                // Draw LED symbol
+                ctx.beginPath();
+                ctx.moveTo(centerX - 15, centerY - 15);
+                ctx.lineTo(centerX + 15, centerY);
+                ctx.lineTo(centerX - 15, centerY + 15);
+                ctx.closePath();
+                ctx.stroke();
+                ctx.moveTo(centerX + 15, centerY - 15);
+                ctx.lineTo(centerX + 15, centerY + 15);
+                ctx.stroke();
+                // Arrows for light
+                ctx.beginPath();
+                ctx.moveTo(centerX + 5, centerY - 20);
+                ctx.lineTo(centerX + 15, centerY - 25);
+                ctx.lineTo(centerX + 12, centerY - 20);
+                ctx.stroke();
+                break;
+                
+            case 'capacitor':
+                // Draw capacitor symbol
+                ctx.beginPath();
+                ctx.moveTo(centerX - 30, centerY);
+                ctx.lineTo(centerX - 5, centerY);
+                ctx.moveTo(centerX - 5, centerY - 20);
+                ctx.lineTo(centerX - 5, centerY + 20);
+                ctx.moveTo(centerX + 5, centerY - 20);
+                ctx.lineTo(centerX + 5, centerY + 20);
+                ctx.moveTo(centerX + 5, centerY);
+                ctx.lineTo(centerX + 30, centerY);
+                ctx.stroke();
+                ctx.fillText('C', centerX, centerY - 30);
+                break;
+                
+            case 'inductor':
+                // Draw inductor coil
+                ctx.beginPath();
+                ctx.moveTo(centerX - 40, centerY);
+                for(let i = 0; i < 4; i++) {
+                    ctx.arc(centerX - 30 + i * 20, centerY, 10, Math.PI, 0, false);
+                }
+                ctx.lineTo(centerX + 40, centerY);
+                ctx.stroke();
+                ctx.fillText('L', centerX, centerY - 25);
+                break;
+                
+            case 'ground':
+                // Draw ground symbol
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY - 20);
+                ctx.lineTo(centerX, centerY);
+                ctx.moveTo(centerX - 20, centerY);
+                ctx.lineTo(centerX + 20, centerY);
+                ctx.moveTo(centerX - 15, centerY + 5);
+                ctx.lineTo(centerX + 15, centerY + 5);
+                ctx.moveTo(centerX - 10, centerY + 10);
+                ctx.lineTo(centerX + 10, centerY + 10);
+                ctx.stroke();
+                break;
+        }
+        
+        console.log('✏️ Drew symbol:', symbol);
+    },
+    
+    clearWhiteboard() {
+        if (!this.whiteboardCtx) return;
+        const canvas = document.getElementById('whiteboardCanvas');
+        this.whiteboardCtx.clearRect(0, 0, canvas.width, canvas.height);
+        console.log('🗑️ Whiteboard cleared');
+    },
+    
+    saveWhiteboard() {
+        const canvas = document.getElementById('whiteboardCanvas');
+        if (!canvas) return;
+        
+        canvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `whiteboard-${Date.now()}.png`;
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+        
+        console.log('💾 Whiteboard saved');
+        alert('💾 Whiteboard saved to downloads!');
     },
     
     // Update UI

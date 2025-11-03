@@ -543,6 +543,145 @@ main {
     gap: 5px;
 }
 
+/* Whiteboard Overlay */
+.whiteboard-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 20;
+}
+
+#whiteboardCanvas {
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+}
+
+.whiteboard-toolbar {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    padding: 10px 15px;
+    border-radius: 30px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    flex-wrap: wrap;
+    max-width: 90%;
+}
+
+.toolbar-section {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 0 10px;
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.toolbar-section:first-child {
+    border-left: none;
+    padding-left: 0;
+}
+
+.tool-btn,
+.symbol-btn {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tool-btn:hover,
+.symbol-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.tool-btn.active {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    border-color: #4f46e5;
+    transform: scale(1.15);
+}
+
+.tool-btn.danger {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+.tool-btn.danger:hover {
+    background: rgba(239, 68, 68, 0.4);
+}
+
+.symbol-btn {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+.symbol-btn:hover {
+    background: rgba(16, 185, 129, 0.4);
+    border-color: #10b981;
+}
+
+#colorPicker {
+    width: 40px;
+    height: 40px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    cursor: pointer;
+    background: transparent;
+}
+
+#colorPicker::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+#colorPicker::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+#lineWidth {
+    width: 80px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+}
+
+#lineWidth::-webkit-slider-thumb {
+    width: 15px;
+    height: 15px;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#lineWidth::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .simple-learning-menu {
