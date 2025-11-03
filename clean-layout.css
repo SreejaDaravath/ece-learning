@@ -2,7 +2,7 @@
 
 /* Hide Cluttered Elements - Clean Up Interface */
 
-/* Hide redundant panels that create clutter */
+/* Hide ALL redundant panels that create clutter */
 .ai-tutor-floating,
 .simulation-panel,
 .certificate-floating-btn,
@@ -13,24 +13,47 @@
 .learning-journey,
 .learning-progress-panel,
 .progress-stats-panel,
-.journey-tracker {
+.journey-tracker,
+.status-panel,
+.current-status,
+.measurements-panel,
+.achievements-panel,
+.reset-progress,
+.your-progress,
+.learning-path-panel,
+.circuit-types-list,
+.phase-indicator,
+.attempts-counter,
+.time-taken,
+.streak-display,
+.accuracy-display,
+.completed-count,
+.study-time {
     display: none !important;
 }
 
 /* Main Layout - Clean & Spacious */
 body {
     overflow-x: hidden;
+    background: #f9fafb;
 }
 
 /* Adjust canvas area for better space with left dashboard */
-#main {
+#main,
+.main-content,
+.game-container,
+main {
     margin-left: 420px !important;
+    margin-right: 20px !important;
     padding: 20px;
     transition: margin-left 0.3s ease;
+    max-width: calc(100% - 440px);
 }
 
-.systematic-dashboard.minimized ~ #main {
+.systematic-dashboard.minimized ~ #main,
+.systematic-dashboard.minimized ~ .main-content {
     margin-left: 20px !important;
+    max-width: calc(100% - 40px);
 }
 
 /* Clean Header - Remove Clutter */
@@ -107,41 +130,84 @@ body {
     display: block;
 }
 
-/* Hide Side Panels - Clean Workspace */
+/* Hide ALL Side Panels - Clean Workspace */
 .right-panel,
 .left-panel-analytics,
 .achievement-sidebar,
 .stats-sidebar,
 .progress-sidebar,
 .recent-activity,
-.activity-feed {
+.activity-feed,
+.status-sidebar,
+.measurements-sidebar,
+.achievements-sidebar,
+.learning-path-sidebar,
+.info-panel,
+.metrics-panel,
+aside,
+.sidebar {
     display: none !important;
 }
 
+/* Hide specific clutter elements by ID */
+#currentStatus,
+#measurementsPanel,
+#achievementsPanel,
+#progressPanel,
+#learningPathPanel,
+#statusPanel {
+    display: none !important;
+}
+
+/* Hide elements with specific text content patterns */
+[class*="status"],
+[class*="measurement"]:not(.measurement-card),
+[class*="achievement"]:not(.achievement-preview),
+[class*="progress"]:not(.progress-fill):not(.progress-track),
+[class*="learning-path"]:not(.systematic-dashboard) {
+    display: none !important;
+}
+
+/* But keep essential measurement cards */
+.measurement-card,
+.measurements-grid {
+    display: block !important;
+}
+
+.measurements-grid {
+    display: grid !important;
+}
+
 /* Level Info - Clean Display */
-.level-info {
+.level-info,
+.level-description,
+.puzzle-description {
     background: white;
     border-radius: 15px;
     padding: 25px;
-    margin: 20px 0;
+    margin: 20px auto;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    max-width: 900px;
 }
 
-.level-info h2 {
+.level-info h2,
+.level-description h2 {
     margin: 0 0 10px 0;
     font-size: 28px;
     font-weight: 700;
     color: #1f2937;
 }
 
-.level-info p {
+.level-info p,
+.level-description p {
     margin: 0;
     font-size: 16px;
     color: #6b7280;
     line-height: 1.6;
 }
 
-.level-goal {
+.level-goal,
+.goal-text {
     background: linear-gradient(135deg, #eff6ff, #dbeafe);
     border-left: 4px solid #3b82f6;
     padding: 15px 20px;
@@ -149,12 +215,16 @@ body {
     margin-top: 15px;
 }
 
-.level-goal strong {
+.level-goal strong,
+.goal-text strong {
     color: #1e40af;
 }
 
 /* Bottom Action Bar - Clean & Clear */
-.action-bar {
+.action-bar,
+.game-controls,
+.level-controls,
+.navigation-buttons {
     background: white;
     border-radius: 15px;
     padding: 20px;
@@ -163,7 +233,8 @@ body {
     display: flex;
     gap: 15px;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .action-bar button {
