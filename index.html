@@ -1,740 +1,831 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0ea5a4">
-    <title>🎓 ECE MASTER - Learn Electronics by Doing!</title>
-    <meta name="description" content="Interactive electronics learning game with 50 levels. Build circuits, connect wires, master voltage dividers, logic gates, and digital circuits. Learn ECE hands-on!">
-    <meta name="keywords" content="electronics, ECE, learning game, circuits, voltage divider, logic gates, interactive education, STEM">
-    <meta name="author" content="ECE Master Team">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://sreejadaravath.github.io/ece-learning/">
-    <meta property="og:title" content="ECE MASTER - Learn Electronics by Doing">
-    <meta property="og:description" content="Interactive game with 50 levels teaching circuits, voltage dividers, logic gates. Build real circuits and master electronics!">
-    <meta property="og:image" content="https://sreejadaravath.github.io/ece-learning/preview.png">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:url" content="https://sreejadaravath.github.io/ece-learning/">
-    <meta name="twitter:title" content="ECE MASTER - Learn Electronics by Doing">
-    <meta name="twitter:description" content="Interactive game with 50 levels teaching circuits, voltage dividers, logic gates. Build real circuits and master electronics!">
-    <meta name="twitter:image" content="https://sreejadaravath.github.io/ece-learning/preview.png">
-    
-    <link rel="stylesheet" href="style.css?v=20251103v4">
-    <link rel="stylesheet" href="simple-learning.css?v=20251104v3">
-    <link rel="stylesheet" href="measurement-tools.css?v=20251104v1">
-    <link rel="manifest" href="manifest.json">
-    
-    <!-- Google Analytics (Privacy-focused) - Replace G-XXXXXXXXXX with your tracking ID -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    <script>
-        // Initialize Google Analytics only if user consents
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        
-        // Check for consent in localStorage
-        const analyticsConsent = localStorage.getItem('analytics-consent');
-        if (analyticsConsent === 'true') {
-            gtag('js', new Date());
-            gtag('config', 'G-XXXXXXXXXX', {
-                'anonymize_ip': true,
-                'cookie_flags': 'SameSite=None;Secure'
-            });
-        }
-        
-        // Custom event tracking
-        window.trackEvent = function(category, action, label, value) {
-            if (analyticsConsent === 'true' && typeof gtag !== 'undefined') {
-                gtag('event', action, {
-                    'event_category': category,
-                    'event_label': label,
-                    'value': value
-                });
-            }
-        };
-        
-        // Error tracking
-        window.addEventListener('error', function(e) {
-            console.error('Application error:', e.error);
-            if (typeof trackEvent !== 'undefined') {
-                trackEvent('Error', 'JavaScript Error', e.message, 0);
-            }
-        });
-        
-        window.addEventListener('unhandledrejection', function(e) {
-            console.error('Unhandled promise rejection:', e.reason);
-            if (typeof trackEvent !== 'undefined') {
-                trackEvent('Error', 'Promise Rejection', e.reason, 0);
-            }
-        });
-    </script>
-</head>
-<body>
-    <!-- Skip link for keyboard users -->
-    <a class="skip-link" href="#main" style="position:absolute;left:-999px;top:auto;" onfocus="this.style.left='10px'" onblur="this.style.left='-999px'">Skip to content</a>
-    
-    <!-- Privacy Notice / Cookie Consent Banner -->
-    <div class="privacy-banner hidden" id="privacyBanner">
-        <div class="privacy-content">
-            <p>🍪 We use analytics to improve your learning experience. Your data is anonymized and secure.</p>
-            <div class="privacy-actions">
-                <button class="privacy-btn accept" id="acceptAnalytics">Accept & Continue</button>
-                <button class="privacy-btn decline" id="declineAnalytics">Decline</button>
-                <a href="#" class="privacy-link" id="learnMorePrivacy">Learn More</a>
-            </div>
-        </div>
-    </div>
-    <!-- 🎮 Game Header -->
-    <header class="game-header" role="banner">
-        <div class="header-left">
-            <h1>⚡ ECE MASTER</h1>
-            <div class="level-badge">
-                <span class="module-name" id="moduleName">Basic Electronics</span>
-                <span class="level-number">Level <span id="levelNum">1</span>/50</span>
-            </div>
-        </div>
-        <div class="header-center">
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar"></div>
-                <span class="progress-text" id="progressText">0%</span>
-            </div>
-        </div>
-        <div class="header-right">
-            <div class="score-display">
-                <span class="score-label">Score:</span>
-                <span class="score-value" id="scoreValue">0</span>
-            </div>
-            <div class="lang-select" style="margin-left:10px;">
-                <label for="lang" class="visually-hidden">Language</label>
-                <select id="lang" aria-label="Language selector">
-                    <option value="en">English</option>
-                    <option value="hi">हिन्दी</option>
-                </select>
-            </div>
-            <div class="score-display">
-                <span class="score-label">High:</span>
-                <span class="score-value gold" id="highScore">0</span>
-            </div>
-        </div>
-    </header>
+<!DOCTYPE html><!DOCTYPE html>
 
-    <!-- 🎯 Main Game Container -->
-    <div class="game-container">
-        
-        <!-- Left Panel - Component Palette -->
-        <aside class="component-palette">
-            <h3>🔧 Components</h3>
-            <div class="palette-section" id="componentsList">
-                <!-- Components will be dynamically loaded -->
-            </div>
-            
-            <div class="palette-divider"></div>
-            
-            <h3>📊 Tools</h3>
-            <div class="tools-section">
-                <button class="tool-btn" id="multimeterBtn">
-                    <span class="tool-icon">🔴</span>
-                    <span class="tool-name">Multimeter</span>
-                </button>
-                <button class="tool-btn" id="logicAnalyzerBtn">
-                    <span class="tool-icon">📈</span>
-                    <span class="tool-name">Logic Analyzer</span>
-                </button>
-                <button class="tool-btn" id="oscilloscopeBtn">
-                    <span class="tool-icon">〰️</span>
-                    <span class="tool-name">Oscilloscope</span>
-                </button>
-            </div>
+<html lang="en"><html lang="en">
 
-            <div class="palette-divider"></div>
-            
-            <div class="quick-actions">
-                <button class="action-btn wire-btn" id="drawWireBtn">
-                    <span>🔌</span> Draw Wire
-                </button>
-                <button class="action-btn clear-btn" id="clearCircuit">
-                    <span>🗑️</span> Clear All
-                </button>
-                <button class="action-btn hint-btn" id="getHint">
-                    <span>💡</span> Hint (-25pts)
-                </button>
-                <button class="action-btn assistant-btn" id="eceAssistant" aria-label="ECE AI Assistant with Webcam">
-                    <span>📹</span> ECE Assistant
-                </button>
-            </div>
-        </aside>
+<head><head>
 
-        <!-- Center Panel - Workspace -->
-        <main class="workspace">
-            <!-- Task Description -->
-            <div class="task-panel" id="taskPanel">
-                <div class="task-header">
-                    <h2 class="task-title" id="taskTitle">Connect Your First LED</h2>
-                    <div class="timer" id="timer">
-                        <span class="timer-icon">⏱️</span>
-                        <span class="timer-value" id="timerValue">60s</span>
-                    </div>
+    <meta charset="UTF-8">    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>🌟 ECE Skill Universe - Master Electronics with AI & Gamification</title>    <meta name="theme-color" content="#6366f1">
+
+    <meta name="description" content="Revolutionary ECE learning platform: Interactive skill tree, AI tutor, virtual lab, project marketplace, mentor connect. Build your portfolio, compete globally!">    <title>⚡ ECE CHAMPIONS - Master Hardcore Electronics Projects</title>
+
+    <link rel="stylesheet" href="universe.css">    <meta name="description" content="Build real-world ECE projects: 4-bit ALU, 8-bit CPU, RAM circuits, Timers, ADC/DAC. Professional gaming platform for serious electronics engineers!">
+
+    <link rel="manifest" href="manifest.json">    <link rel="stylesheet" href="ece-champions.css">
+
+</head></head>
+
+<body><body>
+
+    <!-- Particle Background -->    <!-- Animated Background -->
+
+    <canvas id="particleCanvas"></canvas>    <div class="bg-animation">
+
+        <div class="circuit-pattern"></div>
+
+    <!-- Navigation -->        <canvas id="particles"></canvas>
+
+    <nav class="main-nav">    </div>
+
+        <div class="nav-container">
+
+            <div class="nav-brand">    <!-- Main Container -->
+
+                <h1 class="logo">🌟 ECE Skill Universe</h1>    <div class="game-container">
+
+                <span class="tagline">Master Electronics Like Never Before</span>        <!-- Navigation Header -->
+
+            </div>        <nav class="top-nav">
+
+            <div class="nav-links">            <div class="nav-left">
+
+                <a href="#home" class="nav-link active">Home</a>                <h1 class="logo">⚡ ECE CHAMPIONS</h1>
+
+                <a href="#skills" class="nav-link">Skill Tree</a>                <span class="tagline">Master Hardcore Projects</span>
+
+                <a href="#lab" class="nav-link">Virtual Lab</a>            </div>
+
+                <a href="#projects" class="nav-link">Projects</a>            <div class="nav-center">
+
+                <a href="#mentors" class="nav-link">Mentors</a>                <div class="player-stats">
+
+                <a href="#compete" class="nav-link">Compete</a>                    <div class="stat-item">
+
+            </div>                        <span class="stat-icon">🏆</span>
+
+            <div class="nav-actions">                        <span class="stat-value" id="playerScore">0</span>
+
+                <div class="user-stats">                        <span class="stat-label">Score</span>
+
+                    <span class="stat">⚡ <strong id="userXP">0</strong> XP</span>                    </div>
+
+                    <span class="stat">🏆 Level <strong id="userLevel">1</strong></span>                    <div class="stat-item">
+
+                </div>                        <span class="stat-icon">⚡</span>
+
+                <button class="profile-btn" id="profileBtn">                        <span class="stat-value" id="playerLevel">1</span>
+
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="Profile" class="avatar">                        <span class="stat-label">Level</span>
+
+                </button>                    </div>
+
+            </div>                    <div class="stat-item">
+
+        </div>                        <span class="stat-icon">🔥</span>
+
+    </nav>                        <span class="stat-value" id="playerStreak">0</span>
+
+                        <span class="stat-label">Streak</span>
+
+    <!-- Hero Section -->                    </div>
+
+    <section class="hero" id="home">                </div>
+
+        <div class="hero-content">            </div>
+
+            <h2 class="hero-title">            <div class="nav-right">
+
+                Master ECE Through                <button class="nav-btn" id="leaderboardBtn">
+
+                <span class="gradient-text">Gaming & AI</span>                    <span>🏆</span> Leaderboard
+
+            </h2>                </button>
+
+            <p class="hero-subtitle">                <button class="nav-btn" id="profileBtn">
+
+                Interactive skill tree • Virtual lab • AI tutor • Real projects • Live mentors                    <span>👤</span> Profile
+
+            </p>                </button>
+
+            <div class="hero-stats">            </div>
+
+                <div class="hero-stat">        </nav>
+
+                    <div class="stat-number">10,000+</div>
+
+                    <div class="stat-label">Students</div>        <!-- Main Game Area -->
+
+                </div>        <main class="main-content" id="mainContent">
+
+                <div class="hero-stat">            <!-- Project Selection Screen -->
+
+                    <div class="stat-number">500+</div>            <section class="project-lobby" id="projectLobby">
+
+                    <div class="stat-label">Projects</div>                <div class="lobby-header">
+
+                </div>                    <h2 class="section-title">🎯 Choose Your Challenge</h2>
+
+                <div class="hero-stat">                    <p class="section-subtitle">Build professional ECE projects. Test your skills. Become a champion!</p>
+
+                    <div class="stat-number">100+</div>                </div>
+
+                    <div class="stat-label">Mentors</div>
+
+                </div>                <div class="difficulty-filter">
+
+                <div class="hero-stat">                    <button class="filter-btn active" data-difficulty="all">All Projects</button>
+
+                    <div class="stat-number">50+</div>                    <button class="filter-btn" data-difficulty="hard">🔥 Hard</button>
+
+                    <div class="stat-label">Companies</div>                    <button class="filter-btn" data-difficulty="extreme">💀 Extreme</button>
+
+                </div>                    <button class="filter-btn" data-difficulty="master">👑 Master</button>
+
+            </div>                </div>
+
+            <div class="hero-cta">
+
+                <button class="cta-btn primary" id="startJourneyBtn">                <div class="projects-grid" id="projectsGrid">
+
+                    🚀 Start Your Journey                    <!-- Projects will be dynamically loaded -->
+
+                </button>                </div>
+
+                <button class="cta-btn secondary" id="watchDemoBtn">            </section>
+
+                    ▶️ Watch Demo
+
+                </button>            <!-- Circuit Builder Workspace -->
+
+            </div>            <section class="workspace hidden" id="workspace">
+
+        </div>                <!-- Project Header -->
+
+        <div class="hero-visual">                <div class="project-header">
+
+            <canvas id="skillTreePreview" width="600" height="600"></canvas>                    <button class="back-btn" id="backToLobby">
+
+        </div>                        <span>←</span> Back
+
+    </section>                    </button>
+
+                    <div class="project-info">
+
+    <!-- Features Overview -->                        <h3 class="project-name" id="currentProjectName">4-bit ALU</h3>
+
+    <section class="features">                        <div class="project-meta">
+
+        <h2 class="section-title">🎯 Revolutionary Features</h2>                            <span class="difficulty-badge" id="projectDifficulty">EXTREME</span>
+
+        <div class="features-grid">                            <span class="time-left" id="timeRemaining">30:00</span>
+
+            <div class="feature-card">                        </div>
+
+                <div class="feature-icon">🎮</div>                    </div>
+
+                <h3>Interactive Skill Tree</h3>                    <div class="project-actions">
+
+                <p>Visual learning path from beginner to expert. Unlock skills, earn badges, level up!</p>                        <button class="action-btn hint-btn" id="hintBtn">
+
+                <button class="feature-btn">Explore →</button>                            💡 Hint (-50pts)
+
+            </div>                        </button>
+
+            <div class="feature-card">                        <button class="action-btn test-btn" id="testCircuitBtn">
+
+                <div class="feature-icon">🔬</div>                            🧪 Test Circuit
+
+                <h3>Virtual Electronics Lab</h3>                        </button>
+
+                <p>Build & simulate circuits in real-time. 500+ components, oscilloscope, multimeter!</p>                        <button class="action-btn submit-btn" id="submitBtn">
+
+                <button class="feature-btn">Try Lab →</button>                            ✓ Submit
+
+            </div>                        </button>
+
+            <div class="feature-card">                    </div>
+
+                <div class="feature-icon">🤖</div>                </div>
+
+                <h3>AI Tutor (GPT-Powered)</h3>
+
+                <p>24/7 intelligent help. Ask questions, debug circuits, get instant explanations!</p>                <!-- Main Workspace Grid -->
+
+                <button class="feature-btn">Chat Now →</button>                <div class="workspace-grid">
+
+            </div>                    <!-- Left Sidebar - Components -->
+
+            <div class="feature-card">                    <aside class="components-panel">
+
+                <div class="feature-icon">💼</div>                        <h4 class="panel-title">🔧 Components</h4>
+
+                <h3>Project Marketplace</h3>                        <div class="component-search">
+
+                <p>Real challenges from companies. Win prizes, build portfolio, get hired!</p>                            <input type="text" id="componentSearch" placeholder="Search components..." />
+
+                <button class="feature-btn">Browse →</button>                        </div>
+
+            </div>                        <div class="components-tabs">
+
+            <div class="feature-card">                            <button class="tab-btn active" data-tab="gates">Logic Gates</button>
+
+                <div class="feature-icon">👥</div>                            <button class="tab-btn" data-tab="flipflops">Flip-Flops</button>
+
+                <h3>Live Mentor Connect</h3>                            <button class="tab-btn" data-tab="chips">ICs</button>
+
+                <p>Video calls with experts. Code review, circuit debugging, career guidance!</p>                            <button class="tab-btn" data-tab="io">I/O</button>
+
+                <button class="feature-btn">Find Mentor →</button>                        </div>
+
+            </div>                        <div class="components-list" id="componentsList">
+
+            <div class="feature-card">                            <!-- Components dynamically loaded -->
+
+                <div class="feature-icon">🏆</div>                        </div>
+
+                <h3>Global Competitions</h3>                    </aside>
+
+                <p>Compete with students worldwide. Leaderboards, tournaments, rewards!</p>
+
+                <button class="feature-btn">Compete →</button>                    <!-- Center - Canvas -->
+
+            </div>                    <div class="canvas-area">
+
+        </div>                        <div class="canvas-toolbar">
+
+    </section>                            <button class="tool-btn active" data-tool="select">
+
+                                <span>👆</span> Select
+
+    <!-- Interactive Skill Tree Section -->                            </button>
+
+    <section class="skill-tree-section" id="skills">                            <button class="tool-btn" data-tool="wire">
+
+        <div class="section-header">                                <span>🔌</span> Wire
+
+            <h2 class="section-title">🎯 Your Learning Path</h2>                            </button>
+
+            <p class="section-subtitle">Unlock skills, complete challenges, and become an ECE master!</p>                            <button class="tool-btn" data-tool="delete">
+
+        </div>                                <span>🗑️</span> Delete
+
+        <div class="skill-tree-container">                            </button>
+
+            <div class="skill-tree-sidebar">                            <div class="toolbar-divider"></div>
+
+                <div class="progress-card">                            <button class="tool-btn" id="zoomIn">
+
+                    <h3>Your Progress</h3>                                <span>🔍+</span>
+
+                    <div class="progress-stat">                            </button>
+
+                        <span>Completed Skills:</span>                            <button class="tool-btn" id="zoomOut">
+
+                        <strong id="completedSkills">0/50</strong>                                <span>🔍-</span>
+
+                    </div>                            </button>
+
+                    <div class="progress-bar-container">                            <button class="tool-btn" id="resetView">
+
+                        <div class="progress-bar" id="skillProgress"></div>                                <span>⟲</span> Reset
+
+                    </div>                            </button>
+
+                    <div class="progress-stat">                            <div class="toolbar-divider"></div>
+
+                        <span>Current Branch:</span>                            <button class="tool-btn" id="clearCanvas">
+
+                        <strong id="currentBranch">Basics</strong>                                <span>🗑️</span> Clear All
+
+                    </div>                            </button>
+
+                    <div class="progress-stat">                        </div>
+
+                        <span>Next Unlock:</span>                        <canvas id="circuitCanvas" width="1200" height="800"></canvas>
+
+                        <strong id="nextUnlock">Op-Amps</strong>                        <div class="canvas-grid"></div>
+
+                    </div>                    </div>
+
                 </div>
-                <p class="task-description" id="taskDescription">
-                    Drag a battery and LED. Connect them. Watch it glow! ⚡
-                </p>
-                <div class="task-goal">
-                    <strong>Goal:</strong> <span id="taskGoal">Make the LED glow</span>
-                </div>
+
+                <div class="legend-card">                    <!-- Right Sidebar - Info & Testing -->
+
+                    <h3>Legend</h3>                    <aside class="info-panel">
+
+                    <div class="legend-item">                        <div class="panel-section">
+
+                        <span class="legend-dot completed"></span>                            <h4 class="panel-title">📋 Requirements</h4>
+
+                        <span>Completed</span>                            <div class="requirements-list" id="requirementsList">
+
+                    </div>                                <!-- Requirements dynamically loaded -->
+
+                    <div class="legend-item">                            </div>
+
+                        <span class="legend-dot unlocked"></span>                        </div>
+
+                        <span>Unlocked</span>
+
+                    </div>                        <div class="panel-section">
+
+                    <div class="legend-item">                            <h4 class="panel-title">📊 Truth Table</h4>
+
+                        <span class="legend-dot locked"></span>                            <div class="truth-table-container" id="truthTableContainer">
+
+                        <span>Locked</span>                                <!-- Truth table dynamically loaded -->
+
+                    </div>                            </div>
+
+                </div>                        </div>
+
             </div>
 
-            <!-- Demo Panel (shows at level start) -->
-            <div class="demo-panel hidden" id="demoPanel">
-                <div class="demo-header">
-                    <h3>📺 Watch Demo (10 seconds)</h3>
-                    <div class="demo-timer" id="demoTimer">10s</div>
-                </div>
-                <canvas id="demoCanvas" width="400" height="300" role="img" aria-label="Demo circuit animation" tabindex="0"></canvas>
-                <button class="skip-demo-btn" id="skipDemo">Skip Demo ⏭️</button>
-            </div>
+            <div class="skill-tree-canvas-wrapper">                        <div class="panel-section">
 
-            <!-- Breadboard Canvas -->
-            <div class="breadboard-container" id="breadboardContainer">
-                <canvas id="breadboard" width="800" height="600" role="img" aria-label="Breadboard workspace" tabindex="0"></canvas>
-                
-                <!-- Measurement Overlay -->
-                <div class="measurement-overlay hidden" id="measurementOverlay">
-                    <div class="measurement-box">
-                        <div class="measurement-title">📊 Measurement</div>
-                        <div class="measurement-value" id="measurementValue">--</div>
-                        <button class="close-measurement" id="closeMeasurement">✕</button>
-                    </div>
-                </div>
-            </div>
+                <canvas id="skillTreeCanvas" width="1000" height="800"></canvas>                            <h4 class="panel-title">〰️ Waveform</h4>
 
-            <!-- Control Panel -->
-            <div class="control-panel" role="region" aria-label="Level controls">
-                <button class="control-btn prev-btn" id="prevLevel" title="Previous Level" aria-label="Previous level">
-                    <span class="btn-icon">←</span>
-                    <span class="btn-text">Previous</span>
-                </button>
-                <button class="control-btn demo-btn" id="watchDemo" title="Watch demonstration" aria-label="Watch demo">
-                    <span class="btn-icon">📺</span>
-                    <span class="btn-text">Watch Demo</span>
-                </button>
-                <button class="control-btn answer-btn" id="showAnswer" title="Auto-build circuit (-50 points)" aria-label="Show answer (costs 50 points)">
-                    <span class="btn-icon">👁️</span>
-                    <span class="btn-text">Show Answer</span>
-                </button>
-                <button class="control-btn test-btn" id="testCircuit" title="Test your circuit" aria-label="Test circuit">
-                    <span class="btn-icon">🧪</span>
-                    <span class="btn-text">Test Circuit</span>
-                </button>
-                <button class="control-btn submit-btn" id="submitAnswer" title="Submit your answer" aria-label="Submit answer">
-                    <span class="btn-icon">✓</span>
-                    <span class="btn-text">Submit</span>
-                </button>
-                <button class="control-btn retry-btn hidden" id="retryLevel" title="Retry this level" aria-label="Retry level">
-                    <span class="btn-icon">🔄</span>
-                    <span class="btn-text">Retry</span>
-                </button>
-                <button class="control-btn next-btn hidden" id="nextLevel" title="Next level" aria-label="Next level">
-                    <span class="btn-icon">→</span>
-                    <span class="btn-text">Next Level</span>
-                </button>
-            </div>
+                <div class="tree-controls">                            <canvas id="waveformCanvas" width="300" height="150"></canvas>
 
-            <!-- Feedback Panel -->
-            <div class="feedback-panel hidden" id="feedbackPanel">
-                <div class="feedback-content" id="feedbackContent">
-                    <!-- Feedback will be shown here -->
-                </div>
-            </div>
-        </main>
+                    <button class="tree-btn" id="zoomInTree">🔍+</button>                        </div>
 
-        <!-- Right Panel - Info & Stats -->
-        <aside class="info-panel">
-            <h3>📈 Current Status</h3>
-            
-            <div class="stat-card">
-                <div class="stat-label">Phase</div>
-                <div class="stat-value" id="phaseStatus">Learn</div>
-            </div>
+                    <button class="tree-btn" id="zoomOutTree">🔍-</button>
 
-            <div class="stat-card">
-                <div class="stat-label">Attempts</div>
-                <div class="stat-value" id="attemptsValue">0/3</div>
-            </div>
+                    <button class="tree-btn" id="resetTree">↻</button>                        <div class="panel-section">
 
-            <div class="stat-card">
-                <div class="stat-label">Time Taken</div>
-                <div class="stat-value" id="timeTaken">0s</div>
-            </div>
+                </div>                            <h4 class="panel-title">⚡ Test Results</h4>
 
-            <div class="divider"></div>
+            </div>                            <div class="test-results" id="testResults">
 
-            <h3>🎯 Measurements</h3>
-            <div class="measurements-list" id="measurementsList">
-                <div class="measurement-item">
-                    <span class="measure-label">Voltage:</span>
-                    <span class="measure-value" id="voltageDisplay">--</span>
-                </div>
-                <div class="measurement-item">
-                    <span class="measure-label">Current:</span>
-                    <span class="measure-value" id="currentDisplay">--</span>
-                </div>
-                <div class="measurement-item">
-                    <span class="measure-label">Resistance:</span>
-                    <span class="measure-value" id="resistanceDisplay">--</span>
-                </div>
-                <div class="measurement-item">
-                    <span class="measure-label">Power:</span>
-                    <span class="measure-value" id="powerDisplay">--</span>
-                </div>
-            </div>
+        </div>                                <p class="no-tests">Run a test to see results</p>
 
-            <div class="divider"></div>
+    </section>                            </div>
 
-            <h3>🏆 Achievements</h3>
-            <div class="achievements-list" id="achievementsList">
-                <div class="achievement-badge locked">
-                    <span class="badge-icon">🎓</span>
-                    <span class="badge-name">Scholar</span>
-                </div>
-                <div class="achievement-badge locked">
-                    <span class="badge-icon">⚡</span>
-                    <span class="badge-name">Speed Demon</span>
-                </div>
-                <div class="achievement-badge locked">
-                    <span class="badge-icon">🎯</span>
-                    <span class="badge-name">Perfectionist</span>
-                </div>
-                <div class="achievement-badge locked">
-                    <span class="badge-icon">🔥</span>
-                    <span class="badge-name">Hot Streak</span>
-                </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <button class="reset-btn" id="resetProgress">
-                <span>🔄</span> Reset Progress
-            </button>
-        </aside>
-    </div>
-
-    <!-- 🎉 Success Modal -->
-    <div class="modal hidden" id="successModal">
-        <div class="modal-content success">
-            <div class="modal-header">
-                <h2>🎉 Level Complete!</h2>
-            </div>
-            <div class="modal-body">
-                <div class="score-breakdown">
-                    <div class="score-item">
-                        <span>Base Score:</span>
-                        <span class="score-points" id="baseScore">+100</span>
-                    </div>
-                    <div class="score-item">
-                        <span>Time Bonus:</span>
-                        <span class="score-points" id="timeBonus">+50</span>
-                    </div>
-                    <div class="score-item">
-                        <span>First Attempt:</span>
-                        <span class="score-points" id="attemptBonus">+100</span>
-                    </div>
-                    <div class="score-item total">
-                        <span>Total:</span>
-                        <span class="score-points" id="totalScore">+250</span>
-                    </div>
-                </div>
-                <div class="new-achievement" id="newAchievement"></div>
-            </div>
-            <div class="modal-footer">
-                <button class="modal-btn" id="continueBtn">Continue →</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 🔧 Hint Modal -->
-    <div class="modal hidden" id="hintModal">
-        <div class="modal-content hint">
-            <div class="modal-header">
-                <h2>💡 Hint</h2>
-                <button class="close-modal" id="closeHint">✕</button>
-            </div>
-            <div class="modal-body">
-                <p class="hint-text" id="hintText"></p>
-            </div>
-        </div>
-    </div>
-
-    <!-- 📊 Multimeter Modal -->
-    <div class="modal hidden" id="multimeterModal">
-        <div class="modal-content multimeter">
-            <div class="modal-header">
-                <h2>🔴 Multimeter</h2>
-                <button class="close-modal" id="closeMultimeter">✕</button>
-            </div>
-            <div class="modal-body">
-                <div class="multimeter-display">
-                    <div class="display-screen">
-                        <span class="display-value" id="multimeterReading">0.00</span>
-                        <span class="display-unit" id="multimeterUnit">V</span>
-                    </div>
-                </div>
-                <div class="multimeter-controls">
-                    <button class="meter-mode-btn active" data-mode="voltage">Voltage (V)</button>
-                    <button class="meter-mode-btn" data-mode="current">Current (A)</button>
-                    <button class="meter-mode-btn" data-mode="resistance">Resistance (Ω)</button>
-                </div>
-                <p class="meter-instruction">Click two points on the circuit to measure</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- 📹 ECE Assistant Webcam Modal -->
-    <div class="modal hidden" id="eceAssistantModal">
-        <div class="modal-content assistant">
-            <div class="modal-header">
-                <h2>📹 ECE AI Assistant</h2>
-                <button class="close-modal" id="closeAssistant">✕</button>
-            </div>
-            <div class="modal-body">
-                <div class="assistant-container">
-                    <div class="webcam-section">
-                        <video id="assistantWebcam" width="320" height="240" autoplay style="border-radius: 8px; background: #000;"></video>
-                        <canvas id="assistantCanvas" width="320" height="240" style="display:none;"></canvas>
-                        <div class="webcam-controls">
-                            <button class="webcam-btn" id="startWebcam">
-                                <span>📷</span> Start Camera
-                            </button>
-                            <button class="webcam-btn hidden" id="captureCircuit">
-                                <span>📸</span> Capture Circuit
-                            </button>
-                            <button class="webcam-btn hidden" id="stopWebcam">
-                                <span>⏹️</span> Stop Camera
-                            </button>
                         </div>
-                    </div>
-                    <div class="assistant-feedback">
-                        <h3>🤖 AI Analysis</h3>
-                        <div class="assistant-message" id="assistantMessage">
-                            <p>👋 Hi! I'm your ECE Assistant. I can help you:</p>
-                            <ul>
-                                <li>✅ Check if your circuit is correct</li>
-                                <li>💡 Give hints about component placement</li>
-                                <li>🔍 Identify missing connections</li>
-                                <li>📚 Explain circuit concepts</li>
-                            </ul>
-                            <p style="margin-top:15px; color: #666; font-size: 0.9em;">
-                                <strong>How to use:</strong><br>
-                                1. Click "Start Camera" to enable your webcam<br>
-                                2. Show your circuit to the camera<br>
-                                3. Click "Capture Circuit" for instant feedback<br>
-                                4. Get smart hints to complete the level!
-                            </p>
+
+    <!-- Virtual Lab Section -->                    </aside>
+
+    <section class="lab-section" id="lab">                </div>
+
+        <div class="section-header">            </section>
+
+            <h2 class="section-title">🔬 Virtual Electronics Lab</h2>
+
+            <p class="section-subtitle">Build, simulate, and test circuits in real-time!</p>            <!-- Leaderboard Screen -->
+
+        </div>            <section class="leaderboard-screen hidden" id="leaderboardScreen">
+
+        <div class="lab-container">                <div class="leaderboard-header">
+
+            <div class="lab-sidebar components">                    <button class="back-btn" id="backFromLeaderboard">
+
+                <h3>📦 Components</h3>                        <span>←</span> Back
+
+                <input type="text" class="component-search" placeholder="Search components...">                    </button>
+
+                <div class="component-categories">                    <h2 class="section-title">🏆 Global Leaderboard</h2>
+
+                    <div class="category">                </div>
+
+                        <div class="category-name">⚡ Power</div>                <div class="leaderboard-content">
+
+                        <div class="component-list">                    <div class="leaderboard-tabs">
+
+                            <div class="component" draggable="true" data-type="battery">🔋 Battery</div>                        <button class="lb-tab active" data-lb="global">🌍 Global</button>
+
+                            <div class="component" draggable="true" data-type="dcpower">⚡ DC Source</div>                        <button class="lb-tab" data-lb="weekly">📅 Weekly</button>
+
+                            <div class="component" draggable="true" data-type="ground">⏚ Ground</div>                        <button class="lb-tab" data-lb="friends">👥 Friends</button>
+
+                        </div>                    </div>
+
+                    </div>                    <div class="leaderboard-list" id="leaderboardList">
+
+                    <div class="category">                        <!-- Leaderboard entries dynamically loaded -->
+
+                        <div class="category-name">🔌 Passive</div>                    </div>
+
+                        <div class="component-list">                </div>
+
+                            <div class="component" draggable="true" data-type="resistor">▭ Resistor</div>            </section>
+
+                            <div class="component" draggable="true" data-type="capacitor">⫴ Capacitor</div>
+
+                            <div class="component" draggable="true" data-type="inductor">🌀 Inductor</div>            <!-- Profile Screen -->
+
+                        </div>            <section class="profile-screen hidden" id="profileScreen">
+
+                    </div>                <div class="profile-header">
+
+                    <div class="category">                    <button class="back-btn" id="backFromProfile">
+
+                        <div class="category-name">💡 Output</div>                        <span>←</span> Back
+
+                        <div class="component-list">                    </button>
+
+                            <div class="component" draggable="true" data-type="led">💡 LED</div>                    <h2 class="section-title">👤 Your Profile</h2>
+
+                            <div class="component" draggable="true" data-type="bulb">🔆 Bulb</div>                </div>
+
+                        </div>                <div class="profile-content">
+
+                    </div>                    <div class="profile-card">
+
+                    <div class="category">                        <div class="profile-avatar">
+
+                        <div class="category-name">🎛️ Logic Gates</div>                            <span class="avatar-icon">👨‍💻</span>
+
+                        <div class="component-list">                        </div>
+
+                            <div class="component" draggable="true" data-type="and">∧ AND</div>                        <h3 class="profile-name" id="playerName">ECE Champion</h3>
+
+                            <div class="component" draggable="true" data-type="or">∨ OR</div>                        <p class="profile-title" id="playerTitle">Beginner Engineer</p>
+
+                            <div class="component" draggable="true" data-type="not">¬ NOT</div>                        <div class="profile-stats-grid">
+
+                            <div class="component" draggable="true" data-type="xor">⊕ XOR</div>                            <div class="profile-stat">
+
+                        </div>                                <span class="stat-value" id="profileScore">0</span>
+
+                    </div>                                <span class="stat-label">Total Score</span>
+
+                </div>                            </div>
+
+            </div>                            <div class="profile-stat">
+
+            <div class="lab-workspace">                                <span class="stat-value" id="profileProjects">0</span>
+
+                <div class="lab-toolbar">                                <span class="stat-label">Completed</span>
+
+                    <button class="tool-btn active" data-tool="select">👆 Select</button>                            </div>
+
+                    <button class="tool-btn" data-tool="wire">🔌 Wire</button>                            <div class="profile-stat">
+
+                    <button class="tool-btn" data-tool="delete">🗑️ Delete</button>                                <span class="stat-value" id="profileTime">0h</span>
+
+                    <div class="toolbar-divider"></div>                                <span class="stat-label">Time Spent</span>
+
+                    <button class="tool-btn" id="undoLab">↶</button>                            </div>
+
+                    <button class="tool-btn" id="redoLab">↷</button>                            <div class="profile-stat">
+
+                    <div class="toolbar-divider"></div>                                <span class="stat-value" id="profileRank">#-</span>
+
+                    <button class="action-btn simulate" id="simulateCircuit">▶️ Simulate</button>                                <span class="stat-label">Global Rank</span>
+
+                    <button class="action-btn stop hidden" id="stopSimulation">⏹️ Stop</button>                            </div>
+
+                    <button class="action-btn" id="clearLab">🗑️ Clear</button>                        </div>
+
+                </div>                    </div>
+
+                <canvas id="labCanvas" width="1200" height="700"></canvas>                    <div class="achievements-section">
+
+            </div>                        <h4 class="section-subtitle">🏆 Achievements</h4>
+
+            <div class="lab-sidebar instruments">                        <div class="achievements-grid" id="achievementsGrid">
+
+                <h3>📊 Instruments</h3>                            <!-- Achievements dynamically loaded -->
+
+                <div class="instrument">                        </div>
+
+                    <h4>🔴 Multimeter</h4>                    </div>
+
+                    <div class="meter-display">                    <div class="completed-projects-section">
+
+                        <div class="meter-value" id="meterValue">0.00 V</div>                        <h4 class="section-subtitle">✅ Completed Projects</h4>
+
+                    </div>                        <div class="completed-list" id="completedProjectsList">
+
+                    <div class="meter-modes">                            <!-- Completed projects dynamically loaded -->
+
+                        <button class="mode-btn active" data-mode="v">V</button>                        </div>
+
+                        <button class="mode-btn" data-mode="a">A</button>                    </div>
+
+                        <button class="mode-btn" data-mode="r">Ω</button>                </div>
+
+                    </div>            </section>
+
+                </div>        </main>
+
+                <div class="instrument">    </div>
+
+                    <h4>〰️ Oscilloscope</h4>
+
+                    <canvas id="oscCanvas" width="260" height="150"></canvas>    <!-- Success Modal -->
+
+                </div>    <div class="modal hidden" id="successModal">
+
+                <div class="instrument">        <div class="modal-overlay"></div>
+
+                    <h4>📊 Results</h4>        <div class="modal-content success-modal">
+
+                    <div class="results-list">            <div class="modal-icon">🎉</div>
+
+                        <div class="result-item">Voltage: <span id="resVoltage">--</span></div>            <h3 class="modal-title">Circuit Complete!</h3>
+
+                        <div class="result-item">Current: <span id="resCurrent">--</span></div>            <p class="modal-message">Excellent work! Your circuit passed all tests.</p>
+
+                        <div class="result-item">Power: <span id="resPower">--</span></div>            <div class="score-breakdown">
+
+                    </div>                <div class="score-item">
+
+                </div>                    <span>Base Score:</span>
+
+            </div>                    <span id="modalBaseScore">+500</span>
+
+        </div>                </div>
+
+    </section>                <div class="score-item">
+
+                    <span>Time Bonus:</span>
+
+    <!-- AI Tutor Section -->                    <span id="modalTimeBonus">+200</span>
+
+    <section class="ai-tutor-section">                </div>
+
+        <button class="ai-fab" id="aiFab">🤖</button>                <div class="score-item">
+
+        <div class="ai-chat-window hidden" id="aiChat">                    <span>Efficiency:</span>
+
+            <div class="chat-header">                    <span id="modalEfficiency">+150</span>
+
+                <h3>🤖 AI Tutor</h3>                </div>
+
+                <button class="chat-close" id="closeChatBtn">✕</button>                <div class="score-item total">
+
+            </div>                    <span>Total:</span>
+
+            <div class="chat-messages" id="chatMessages">                    <span id="modalTotalScore">+850</span>
+
+                <div class="chat-message bot">                </div>
+
+                    <div class="message-avatar">🤖</div>            </div>
+
+                    <div class="message-bubble">            <div class="modal-actions">
+
+                        <p>Hi! I'm your AI tutor. Ask me anything about electronics!</p>                <button class="modal-btn secondary" id="reviewCircuit">Review Circuit</button>
+
+                        <div class="quick-questions">                <button class="modal-btn primary" id="nextProject">Next Challenge →</button>
+
+                            <button class="quick-q">Explain Ohm's Law</button>            </div>
+
+                            <button class="quick-q">How do transistors work?</button>        </div>
+
+                            <button class="quick-q">Debug my circuit</button>    </div>
+
                         </div>
-                    </div>
+
+                    </div>    <!-- Failure Modal -->
+
+                </div>    <div class="modal hidden" id="failureModal">
+
+            </div>        <div class="modal-overlay"></div>
+
+            <div class="chat-input-area">        <div class="modal-content failure-modal">
+
+                <input type="text" class="chat-input" id="chatInput" placeholder="Ask a question...">            <div class="modal-icon">❌</div>
+
+                <button class="send-btn" id="sendBtn">➤</button>            <h3 class="modal-title">Circuit Failed</h3>
+
+            </div>            <p class="modal-message" id="failureMessage">Some tests didn't pass. Review the requirements and try again.</p>
+
+        </div>            <div class="failed-tests" id="failedTestsList">
+
+    </section>                <!-- Failed tests dynamically loaded -->
+
+            </div>
+
+    <!-- Project Marketplace Section -->            <div class="modal-actions">
+
+    <section class="projects-section" id="projects">                <button class="modal-btn secondary" id="showHint">💡 Get Hint</button>
+
+        <div class="section-header">                <button class="modal-btn primary" id="retryCircuit">🔄 Try Again</button>
+
+            <h2 class="section-title">💼 Project Marketplace</h2>            </div>
+
+            <p class="section-subtitle">Real challenges from companies. Build your portfolio!</p>        </div>
+
+        </div>    </div>
+
+        <div class="projects-filters">
+
+            <button class="filter-btn active" data-filter="all">All</button>    <!-- Hint Modal -->
+
+            <button class="filter-btn" data-filter="beginner">Beginner</button>    <div class="modal hidden" id="hintModal">
+
+            <button class="filter-btn" data-filter="intermediate">Intermediate</button>        <div class="modal-overlay"></div>
+
+            <button class="filter-btn" data-filter="advanced">Advanced</button>        <div class="modal-content hint-modal">
+
+            <button class="filter-btn" data-filter="prize">💰 With Prize</button>            <div class="modal-close" id="closeHint">✕</div>
+
+        </div>            <div class="modal-icon">💡</div>
+
+        <div class="projects-grid">            <h3 class="modal-title">Hint</h3>
+
+            <div class="project-card" data-difficulty="beginner">            <p class="modal-message hint-text" id="hintText"></p>
+
+                <div class="project-badge">🎯 Beginner</div>            <div class="modal-actions">
+
+                <div class="project-prize">💰 $100</div>                <button class="modal-btn primary" id="closeHintBtn">Got it!</button>
+
+                <h3>Design a Smart LED Controller</h3>            </div>
+
+                <p>Create a circuit to control LED brightness using PWM. Add smartphone control!</p>        </div>
+
+                <div class="project-meta">    </div>
+
+                    <span>⏱️ 2 weeks</span>
+
+                    <span>👥 50 enrolled</span>    <!-- Scripts -->
+
+                    <span>⭐ 4.8/5</span>    <script src="ece-champions.js"></script>
+
+                </div></body>
+
+                <div class="project-tags"></html>
+
+                    <span class="tag">Arduino</span>
+                    <span class="tag">PWM</span>
+                    <span class="tag">IoT</span>
                 </div>
-                <div class="assistant-tips">
-                    <strong>💡 Quick Tips:</strong>
-                    <div class="tip-grid">
-                        <button class="tip-btn" data-tip="components">Show All Components</button>
-                        <button class="tip-btn" data-tip="connections">Check Connections</button>
-                        <button class="tip-btn" data-tip="values">Verify Values</button>
-                        <button class="tip-btn" data-tip="theory">Explain Theory</button>
-                    </div>
+                <button class="project-btn">View Details →</button>
+            </div>
+            <div class="project-card" data-difficulty="intermediate">
+                <div class="project-badge">🔥 Intermediate</div>
+                <div class="project-prize">💰 $500</div>
+                <h3>Build a Digital Voltmeter</h3>
+                <p>Design a 4-digit voltmeter with ADC, display driver, and auto-ranging feature.</p>
+                <div class="project-meta">
+                    <span>⏱️ 3 weeks</span>
+                    <span>👥 30 enrolled</span>
+                    <span>⭐ 4.9/5</span>
+                </div>
+                <div class="project-tags">
+                    <span class="tag">ADC</span>
+                    <span class="tag">7-Segment</span>
+                    <span class="tag">PCB</span>
+                </div>
+                <button class="project-btn">View Details →</button>
+            </div>
+            <div class="project-card" data-difficulty="advanced">
+                <div class="project-badge">💀 Advanced</div>
+                <div class="project-prize">💰 $2000</div>
+                <h3>Create a Mini 8-bit Computer</h3>
+                <p>Design and build a functional 8-bit CPU with ALU, registers, and basic I/O!</p>
+                <div class="project-meta">
+                    <span>⏱️ 8 weeks</span>
+                    <span>👥 15 enrolled</span>
+                    <span>⭐ 5.0/5</span>
+                </div>
+                <div class="project-tags">
+                    <span class="tag">CPU Design</span>
+                    <span class="tag">FPGA</span>
+                    <span class="tag">Verilog</span>
+                </div>
+                <button class="project-btn">View Details →</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mentor Connect Section -->
+    <section class="mentors-section" id="mentors">
+        <div class="section-header">
+            <h2 class="section-title">👥 Connect with Expert Mentors</h2>
+            <p class="section-subtitle">Get personalized guidance from industry professionals!</p>
+        </div>
+        <div class="mentors-grid">
+            <div class="mentor-card">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex" alt="Mentor" class="mentor-avatar">
+                <h3>Dr. Alex Kumar</h3>
+                <p class="mentor-title">Senior Circuit Designer @ Intel</p>
+                <div class="mentor-stats">
+                    <span>⭐ 4.9 (120 reviews)</span>
+                    <span>💰 $50/hour</span>
+                </div>
+                <div class="mentor-skills">
+                    <span class="skill-tag">Analog Design</span>
+                    <span class="skill-tag">PCB</span>
+                    <span class="skill-tag">Op-Amps</span>
+                </div>
+                <button class="mentor-btn">📹 Book Session</button>
+            </div>
+            <div class="mentor-card">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah" alt="Mentor" class="mentor-avatar">
+                <h3>Sarah Johnson</h3>
+                <p class="mentor-title">Digital Design Lead @ NVIDIA</p>
+                <div class="mentor-stats">
+                    <span>⭐ 5.0 (98 reviews)</span>
+                    <span>💰 $75/hour</span>
+                </div>
+                <div class="mentor-skills">
+                    <span class="skill-tag">FPGA</span>
+                    <span class="skill-tag">Verilog</span>
+                    <span class="skill-tag">Digital Logic</span>
+                </div>
+                <button class="mentor-btn">📹 Book Session</button>
+            </div>
+            <div class="mentor-card">
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Raj" alt="Mentor" class="mentor-avatar">
+                <h3>Rajesh Patel</h3>
+                <p class="mentor-title">IoT Architect @ Google</p>
+                <div class="mentor-stats">
+                    <span>⭐ 4.8 (85 reviews)</span>
+                    <span>💰 $60/hour</span>
+                </div>
+                <div class="mentor-skills">
+                    <span class="skill-tag">IoT</span>
+                    <span class="skill-tag">Embedded</span>
+                    <span class="skill-tag">Microcontrollers</span>
+                </div>
+                <button class="mentor-btn">📹 Book Session</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Competition/Leaderboard Section -->
+    <section class="compete-section" id="compete">
+        <div class="section-header">
+            <h2 class="section-title">🏆 Global Competitions</h2>
+            <p class="section-subtitle">Compete with students worldwide!</p>
+        </div>
+        <div class="leaderboard-container">
+            <div class="leaderboard-tabs">
+                <button class="lb-tab active" data-lb="global">🌍 Global</button>
+                <button class="lb-tab" data-lb="country">🇮🇳 India</button>
+                <button class="lb-tab" data-lb="college">🏫 Your College</button>
+            </div>
+            <div class="leaderboard-table">
+                <div class="leaderboard-row header">
+                    <span>Rank</span>
+                    <span>Player</span>
+                    <span>XP</span>
+                    <span>Projects</span>
+                    <span>Badge</span>
+                </div>
+                <div class="leaderboard-row rank-1">
+                    <span class="rank">🥇 1</span>
+                    <span class="player">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=John" alt="Player">
+                        John Smith
+                    </span>
+                    <span class="xp">125,890</span>
+                    <span class="projects">87</span>
+                    <span class="badge">👑 Legend</span>
+                </div>
+                <div class="leaderboard-row rank-2">
+                    <span class="rank">🥈 2</span>
+                    <span class="player">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Emma" alt="Player">
+                        Emma Wilson
+                    </span>
+                    <span class="xp">118,540</span>
+                    <span class="projects">82</span>
+                    <span class="badge">💎 Master</span>
+                </div>
+                <div class="leaderboard-row rank-3">
+                    <span class="rank">🥉 3</span>
+                    <span class="player">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Chen" alt="Player">
+                        Chen Li
+                    </span>
+                    <span class="xp">112,230</span>
+                    <span class="projects">79</span>
+                    <span class="badge">💎 Master</span>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <script src="levels-data.js?v=20251103v4"></script>
-    <script src="game-engine.js?v=20251103v4"></script>
-    <script src="onboarding.js?v=20251103v5"></script>
-    <script src="advanced-learning.js?v=20251103v5"></script>
-    
-    <!-- ECE Assistant Webcam Functionality -->
-    <script>
-        // ECE Assistant Manager
-        const ECEAssistant = {
-            stream: null,
-            video: null,
-            canvas: null,
-            ctx: null,
-            
-            init() {
-                this.video = document.getElementById('assistantWebcam');
-                this.canvas = document.getElementById('assistantCanvas');
-                this.ctx = this.canvas.getContext('2d');
-                
-                // Button handlers
-                document.getElementById('eceAssistant').addEventListener('click', () => {
-                    document.getElementById('eceAssistantModal').classList.remove('hidden');
-                });
-                
-                document.getElementById('closeAssistant').addEventListener('click', () => {
-                    this.stopCamera();
-                    document.getElementById('eceAssistantModal').classList.add('hidden');
-                });
-                
-                document.getElementById('startWebcam').addEventListener('click', () => this.startCamera());
-                document.getElementById('stopWebcam').addEventListener('click', () => this.stopCamera());
-                document.getElementById('captureCircuit').addEventListener('click', () => this.captureAndAnalyze());
-                
-                // Tip buttons
-                document.querySelectorAll('.tip-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const tip = e.target.dataset.tip;
-                        this.showTip(tip);
-                    });
-                });
-            },
-            
-            async startCamera() {
-                try {
-                    this.stream = await navigator.mediaDevices.getUserMedia({ 
-                        video: { width: 320, height: 240 } 
-                    });
-                    this.video.srcObject = this.stream;
-                    
-                    document.getElementById('startWebcam').classList.add('hidden');
-                    document.getElementById('captureCircuit').classList.remove('hidden');
-                    document.getElementById('stopWebcam').classList.remove('hidden');
-                    
-                    this.updateMessage('📹 Camera active! Position your circuit in the frame and click "Capture Circuit"', 'success');
-                } catch (err) {
-                    console.error('Camera access error:', err);
-                    this.updateMessage('❌ Camera access denied. Please allow camera permissions or use Quick Tips below.', 'error');
-                }
-            },
-            
-            stopCamera() {
-                if (this.stream) {
-                    this.stream.getTracks().forEach(track => track.stop());
-                    this.video.srcObject = null;
-                    this.stream = null;
-                    
-                    document.getElementById('startWebcam').classList.remove('hidden');
-                    document.getElementById('captureCircuit').classList.add('hidden');
-                    document.getElementById('stopWebcam').classList.add('hidden');
-                }
-            },
-            
-            captureAndAnalyze() {
-                // Capture frame from video
-                this.ctx.drawImage(this.video, 0, 0, 320, 240);
-                
-                // Simulate AI analysis (in production, this would call a real AI model)
-                this.updateMessage('🔄 Analyzing your circuit...', 'info');
-                
-                setTimeout(() => {
-                    this.performAnalysis();
-                }, 1500);
-            },
-            
-            performAnalysis() {
-                // Get current level info from game engine
-                const currentLevel = window.game ? window.game.currentLevel : null;
-                
-                if (!currentLevel) {
-                    this.updateMessage('⚠️ Please load a level first!', 'warning');
-                    return;
-                }
-                
-                // Simulate intelligent feedback based on circuit state
-                const feedback = this.generateFeedback(currentLevel);
-                this.updateMessage(feedback, 'success');
-            },
-            
-            generateFeedback(level) {
-                const tips = [
-                    `🎯 <strong>Circuit Analysis Complete!</strong><br><br>
-                    ✅ <strong>Level Goal:</strong> ${level.goal || 'Complete the circuit'}<br><br>
-                    💡 <strong>Smart Hints:</strong><br>
-                    • Make sure all components are properly connected<br>
-                    • Check the polarity of your components (+ and -)<br>
-                    • Verify wire connections are complete<br>
-                    • Use the Test Circuit button to validate<br><br>
-                    <strong>Need more help?</strong> Click the Hint button for detailed guidance!`,
-                    
-                    `🔍 <strong>Component Check:</strong><br><br>
-                    • Required components detected ✓<br>
-                    • Double-check component orientations<br>
-                    • Ensure proper power supply connections<br><br>
-                    💪 You're on the right track! Keep going!`,
-                    
-                    `⚡ <strong>Circuit Status:</strong><br><br>
-                    • Components: Looking good!<br>
-                    • Connections: Review your wiring<br>
-                    • Power flow: Check positive/negative terminals<br><br>
-                    🎓 Remember: Current flows from + to -`,
-                ];
-                
-                return tips[Math.floor(Math.random() * tips.length)];
-            },
-            
-            showTip(tipType) {
-                const currentLevel = window.game ? window.game.currentLevel : null;
-                
-                const tips = {
-                    components: `📦 <strong>Components for this level:</strong><br><br>
-                        ${currentLevel && currentLevel.components ? 
-                          currentLevel.components.map(c => `• ${c.type}: ${c.value || ''}`).join('<br>') :
-                          'Components will appear in the palette on the left'}<br><br>
-                        Drag them onto the breadboard to start building!`,
-                    
-                    connections: `🔌 <strong>Connection Tips:</strong><br><br>
-                        • Click "Draw Wire" to connect components<br>
-                        • Connect positive (+) to positive terminals<br>
-                        • Connect negative (-) to ground or negative terminals<br>
-                        • Complete the circuit path for current to flow<br><br>
-                        ⚡ Tip: Use the multimeter to verify connections!`,
-                    
-                    values: `📊 <strong>Component Values:</strong><br><br>
-                        • Check resistor color codes<br>
-                        • Verify voltage ratings on power supplies<br>
-                        • Use the multimeter to measure actual values<br>
-                        • Ensure capacitor polarities are correct<br><br>
-                        🎯 Goal: ${currentLevel ? currentLevel.goal : 'Complete the circuit correctly'}`,
-                    
-                    theory: `📚 <strong>Circuit Theory:</strong><br><br>
-                        <strong>Ohm's Law:</strong> V = I × R<br>
-                        • V (Voltage) = Electrical pressure<br>
-                        • I (Current) = Flow of electrons<br>
-                        • R (Resistance) = Opposition to flow<br><br>
-                        <strong>Kirchhoff's Laws:</strong><br>
-                        • Voltage Law: Sum of voltages in a loop = 0<br>
-                        • Current Law: Current in = Current out<br><br>
-                        💡 Apply these principles to solve the level!`
-                };
-                
-                this.updateMessage(tips[tipType] || 'Feature coming soon!', 'info');
-            },
-            
-            updateMessage(html, type = 'info') {
-                const messageDiv = document.getElementById('assistantMessage');
-                messageDiv.innerHTML = html;
-                messageDiv.className = 'assistant-message ' + type;
-            }
-        };
-        
-        // Initialize when DOM is ready
-        document.addEventListener('DOMContentLoaded', () => {
-            ECEAssistant.init();
-            PrivacyManager.init();
-        });
-    </script>
-    
-    <!-- Privacy & Analytics Manager -->
-    <script>
-        const PrivacyManager = {
-            init() {
-                const consent = localStorage.getItem('analytics-consent');
-                
-                // Show banner if user hasn't made a choice
-                if (consent === null) {
-                    setTimeout(() => {
-                        document.getElementById('privacyBanner').classList.remove('hidden');
-                    }, 2000); // Show after 2 seconds
-                }
-                
-                // Button handlers
-                document.getElementById('acceptAnalytics').addEventListener('click', () => {
-                    this.setConsent(true);
-                    this.trackEvent('Privacy', 'Analytics Consent', 'Accepted', 1);
-                });
-                
-                document.getElementById('declineAnalytics').addEventListener('click', () => {
-                    this.setConsent(false);
-                });
-                
-                document.getElementById('learnMorePrivacy').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.showPrivacyInfo();
-                });
-            },
-            
-            setConsent(accepted) {
-                localStorage.setItem('analytics-consent', accepted.toString());
-                document.getElementById('privacyBanner').classList.add('hidden');
-                
-                if (accepted) {
-                    // Reload analytics
-                    location.reload();
-                }
-            },
-            
-            showPrivacyInfo() {
-                const info = `
-                    <div style="padding: 20px; background: var(--bg-card); border-radius: 12px;">
-                        <h3 style="color: var(--primary); margin-bottom: 15px;">🔒 Privacy Policy</h3>
-                        <p style="line-height: 1.6; margin-bottom: 15px;">
-                            <strong>We respect your privacy!</strong> Here's what we collect:
-                        </p>
-                        <ul style="line-height: 1.8; margin-left: 20px;">
-                            <li>✅ Anonymous usage statistics (levels completed, time spent)</li>
-                            <li>✅ Technical data (browser, device type, screen size)</li>
-                            <li>✅ Error reports to improve stability</li>
-                            <li>❌ NO personal information (name, email, etc.)</li>
-                            <li>❌ NO tracking across websites</li>
-                            <li>❌ NO selling your data</li>
-                        </ul>
-                        <p style="line-height: 1.6; margin-top: 15px; color: var(--text-secondary);">
-                            <strong>Your IP is anonymized.</strong> All data is secure and used only to improve the learning experience.
-                            You can change your choice anytime by clearing browser data.
-                        </p>
-                    </div>
-                `;
-                
-                const messageDiv = document.getElementById('assistantMessage');
-                if (messageDiv) {
-                    messageDiv.innerHTML = info;
-                    messageDiv.className = 'assistant-message info';
-                    document.getElementById('eceAssistantModal').classList.remove('hidden');
-                } else {
-                    alert(info.replace(/<[^>]*>/g, ''));
-                }
-            },
-            
-            trackEvent(category, action, label, value) {
-                if (window.trackEvent) {
-                    window.trackEvent(category, action, label, value);
-                }
-            }
-        };
-        
-        // Track level completions
-        window.trackLevelComplete = function(levelNum, score, time) {
-            if (window.trackEvent) {
-                trackEvent('Gameplay', 'Level Complete', `Level ${levelNum}`, score);
-                trackEvent('Gameplay', 'Completion Time', `Level ${levelNum}`, time);
-            }
-        };
-        
-        // Track feature usage
-        window.trackFeatureUse = function(featureName) {
-            if (window.trackEvent) {
-                trackEvent('Features', 'Feature Used', featureName, 1);
-            }
-        };
-    </script>
-    
-    <!-- Simple Learning Platform: AI Tutor, Simulation, Webcam -->
-    <script src="simple-learning.js?v=20251104v3"></script>
-    
-    <!-- Measurement Tools: Multimeter, Oscilloscope, Logic Analyzer -->
-    <script src="measurement-tools.js?v=20251104v1"></script>
-    
-    <script>
-        // Register service worker for offline support (graceful if not supported)
-        if ('serviceWorker' in navigator) {
-            try {
-                navigator.serviceWorker.register('/service-worker.js');
-                console.log('Service worker registered');
-            } catch (err) {
-                console.warn('Service worker registration failed', err);
-            }
-        }
-    </script>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>🌟 ECE Skill Universe</h3>
+                <p>Revolutionizing ECE education through AI, gamification, and community.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Platform</h4>
+                <a href="#skills">Skill Tree</a>
+                <a href="#lab">Virtual Lab</a>
+                <a href="#projects">Projects</a>
+                <a href="#mentors">Mentors</a>
+            </div>
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <a href="#">Documentation</a>
+                <a href="#">Tutorials</a>
+                <a href="#">API</a>
+                <a href="#">Blog</a>
+            </div>
+            <div class="footer-section">
+                <h4>Connect</h4>
+                <a href="#">GitHub</a>
+                <a href="#">Discord</a>
+                <a href="#">Twitter</a>
+                <a href="#">LinkedIn</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 ECE Skill Universe. Made with ❤️ for ECE students.</p>
+        </div>
+    </footer>
+
+    <script src="universe.js"></script>
 </body>
 </html>
