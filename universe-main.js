@@ -322,7 +322,7 @@ skillCanvas.addEventListener('wheel', (e) => {
     drawSkillTree();
 });
 
-// Click to unlock/complete or open learning
+// Click to unlock/complete or open learning WITH PUZZLE
 skillCanvas.addEventListener('click', (e) => {
     const rect = skillCanvas.getBoundingClientRect();
     const mouseX = (e.clientX - rect.left - AppState.skillTree.panX) / AppState.skillTree.zoom;
@@ -332,35 +332,22 @@ skillCanvas.addEventListener('click', (e) => {
         const dx = mouseX - node.x;
         const dy = mouseY - node.y;
         if (Math.sqrt(dx * dx + dy * dy) < 50 && node.unlocked) {
-            // Open AI Voice Learning Modal
-            if (typeof aiVoice !== 'undefined' && typeof COMPLETE_LEARNING_CONTENT !== 'undefined') {
-                if (COMPLETE_LEARNING_CONTENT[node.id]) {
-                    aiVoice.loadSkill(node.id);
-                } else {
-                    AppState.showNotification(`📚 Learning content for ${node.name} coming soon!`);
+            // NEW: Open Puzzle System First!
+            if (typeof puzzleSystem !== 'undefined' && !node.completed) {
+                puzzleSystem.openPuzzle(node.id);
+            } else if (node.completed) {
+                // Already completed - just open learning
+                if (typeof aiVoice !== 'undefined' && typeof COMPLETE_LEARNING_CONTENT !== 'undefined') {
+                    if (COMPLETE_LEARNING_CONTENT[node.id]) {
+                        aiVoice.loadSkill(node.id);
+                    } else {
+                        AppState.showNotification(`📚 Learning content for ${node.name} coming soon!`);
+                    }
                 }
             }
             
-            // Mark as completed if not already
-            if (!node.completed) {
-                node.completed = true;
-                AppState.user.completedSkills.push(node.id);
-                AppState.addXP(node.xp);
-                
-                // Unlock connected nodes
-                SKILL_TREE_DATA.connections.forEach(([from, to]) => {
-                    if (from === node.id) {
-                        const nextNode = AppState.skillTree.nodes.find(n => n.id === to);
-                        if (nextNode && !nextNode.unlocked) {
-                            nextNode.unlocked = true;
-                            AppState.showNotification(`🔓 Unlocked: ${nextNode.name}`);
-                        }
-                    }
-                });
-                
-                drawSkillTree();
-                AppState.save();
-            }
+            // Completion logic moved to puzzle system
+            drawSkillTree();
         }
     });
 });
